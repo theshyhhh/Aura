@@ -1,11 +1,18 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	//可被复制，用于网络复制
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -56,5 +63,52 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	{
 		ControlledPawn->AddMovementInput(ForwardVector, InputAxisValue.Y);
 		ControlledPawn->AddMovementInput(RightVector, InputAxisValue.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHitResult;
+	GetHitResultUnderCursor(ECC_Visibility,false,CursorHitResult);
+	if (!CursorHitResult.bBlockingHit)return;
+
+	LastActor=CurrentActor;
+	AActor* HitActor=CursorHitResult.GetActor();
+	if (HitActor&&HitActor->Implements<UEnemyInterface>())
+	{
+		CurrentActor=HitActor;
+	}
+	else
+	{
+		CurrentActor=nullptr;
+	}
+	/*
+	 *当LastActor和CurrentActor都为空，或都不为空且相同时，什么都不做
+	 *当LastActor为空,CurrentActor不为空时，CurrentActor调用HighlightActor
+	 *当CurrentActor为空，LastActor不为空时，LastActor调用UnHighlightActor
+	 *当都不为空时，且不相同，LastActor调用UnHighlightActor，CurrentActor调用HighlightActor
+	 */
+	if (!LastActor.IsValid())
+	{
+		if (CurrentActor.IsValid())
+		{
+			IEnemyInterface* CurrentPtr=Cast<IEnemyInterface>(CurrentActor.Get());
+			CurrentPtr->HighlightActor();
+		}
+	}
+	else
+	{
+		if (!CurrentActor.IsValid())
+		{
+			IEnemyInterface* LastPtr=Cast<IEnemyInterface>(LastActor.Get());
+			LastPtr->UnHighlightActor();
+		}
+		else if (CurrentActor!=LastActor)
+		{
+			IEnemyInterface* CurrentPtr=Cast<IEnemyInterface>(CurrentActor.Get());
+			IEnemyInterface* LastPtr=Cast<IEnemyInterface>(LastActor.Get());
+			CurrentPtr->HighlightActor();
+			LastPtr->UnHighlightActor();
+		}
 	}
 }
