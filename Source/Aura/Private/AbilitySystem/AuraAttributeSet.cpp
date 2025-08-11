@@ -1,9 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AbilitySystem/AuraAttributeSet.h"
-#include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
+
+UAuraAttributeSet::UAuraAttributeSet()
+{
+	InitMaxHealth(100);
+	InitHealth(100);
+	InitMana(100);
+	InitMaxMana(100);
+}
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
