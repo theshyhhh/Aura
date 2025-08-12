@@ -9,6 +9,7 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		OverlayWidgetController->BindCallbacksToDependencies();//控制器初始化后就可以将控制器的回调函数绑定到ASC的属性改变的委托上了
 	}
 	return OverlayWidgetController;
 }
@@ -26,6 +27,6 @@ void AAuraHUD::InitOverlayWidget(APlayerController* PlayerController, APlayerSta
 	//OverlayWidget设置控制器
 	OverlayWidget->SetWidgetController(GetOverlayWidgetController(
 		FAuraWidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet)));
-	OverlayWidgetController->BroadcastInitialValues();
+	OverlayWidgetController->BroadcastInitialValues();//只能在OverlayWidget设置了控制器，绑定了回调函数后广播
 	UserWidget->AddToViewport();
 }

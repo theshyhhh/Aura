@@ -56,8 +56,10 @@ void AAuraCharacter::InitAbilityActorInfo()
 	//只有当前客户端的玩家才有控制器，其它客户端的玩家在当前客户端没有控制器，所以其它人物就不会在本客户端初始化HUD
 	if (APlayerController* PlayerController = GetController<APlayerController>())
 	{
-		AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD());
-		check(AuraHUD);
-		AuraHUD->InitOverlayWidget(PlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
+		{
+			AuraHUD->InitOverlayWidget(PlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+
 	}
 }

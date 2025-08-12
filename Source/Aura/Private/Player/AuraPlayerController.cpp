@@ -25,9 +25,11 @@ void AAuraPlayerController::BeginPlay()
 	//通过本地玩家的增强输入子系统，将InputMappingContext添加给本地玩家，并且可以设置优先级
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 		GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(AuraContext, 0);
-
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext, 0);
+	}
+	
 	bShowMouseCursor = true;
 	//配置鼠标光标类型
 	DefaultMouseCursor = EMouseCursor::Default;

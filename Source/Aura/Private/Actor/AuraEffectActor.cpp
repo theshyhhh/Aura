@@ -26,6 +26,7 @@ void AAuraEffectActor::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompo
 
 		UAuraAttributeSet* CanChangeAttributeSetPtr =const_cast<UAuraAttributeSet*>(AuraAttributeSet);
 		CanChangeAttributeSetPtr->SetHealth(CanChangeAttributeSetPtr->GetHealth()+50.f);
+		CanChangeAttributeSetPtr->SetMana(CanChangeAttributeSetPtr->GetMana()-15.f);
 		Destroy();
 	}
 }
