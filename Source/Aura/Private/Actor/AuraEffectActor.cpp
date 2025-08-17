@@ -23,7 +23,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(this);
 	FGameplayEffectSpecHandle GameplayEffectSpecHandle = TargetASC->MakeOutgoingSpec(
-		GameplayEffectClass, 1.0f, EffectContextHandle);
+		GameplayEffectClass, ActorLevel, EffectContextHandle);
 	const FActiveGameplayEffectHandle ActiveGameplayEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(
 		*GameplayEffectSpecHandle.Data.Get());
 	const bool bIsInfinite = GameplayEffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy ==
@@ -79,7 +79,7 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 		}
 		for (auto& it : HandlesToRemove)
 		{
-			ActiveEffectHandles.FindAndRemoveChecked(it);//从Map中移除
+			ActiveEffectHandles.FindAndRemoveChecked(it); //从Map中移除
 		}
 	}
 }
