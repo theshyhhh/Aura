@@ -26,4 +26,6 @@ protected:
 
 private:
 	void SetRenderCustomDepth(const bool bValue);
+
+	virtual void InitAbilityActorInfo() override;
 };
