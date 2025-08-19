@@ -32,9 +32,13 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		{
 			for (const FGameplayTag& Tag : AssetTags)
 			{
-				const FString Msg = FString::Printf(TEXT("Tag: %s"), *Tag.ToString());
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Msg);
-				FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+				//从配置文件中查找所需的Tag，如果Tag不存在就会报错
+				FGameplayTag MessageTag= FGameplayTag::RequestGameplayTag(FName(TEXT("Message")));
+				//检测子Tag是否能匹配到父Tag，即传入的Tag是不是Message下的Tag
+				if (!Tag.MatchesTag(MessageTag))continue;
+				
+				const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+				MessageWidgetRowDelegate.Broadcast(*Row);
 			}
 		}
 	);
