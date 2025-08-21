@@ -34,7 +34,7 @@ void AAuraEnemy::BeginPlay()
 	InitAbilityActorInfo();
 }
 
-void AAuraEnemy::SetRenderCustomDepth(const bool bValue)
+void AAuraEnemy::SetRenderCustomDepth(const bool bValue) const
 {
 	GetMesh()->SetRenderCustomDepth(bValue);
 	Weapon->SetRenderCustomDepth(bValue);

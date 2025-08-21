@@ -12,6 +12,10 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase
 public:
 	AAuraCharacter();
 
+	//begin ICombatInterface
+	virtual int32 GetCharacterLevel() override;
+	//end ICombatInterface
+
 protected:
 	virtual void BeginPlay() override;
 

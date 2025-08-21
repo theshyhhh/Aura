@@ -31,7 +31,7 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
-	void Move(const FInputActionValue& InputActionValue);
+	void Move(const FInputActionValue& InputActionValue) ;
 
 	void CursorTrace();
 

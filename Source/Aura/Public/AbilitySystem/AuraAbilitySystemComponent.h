@@ -19,5 +19,5 @@ public:
 
 protected:
 	void EffectAppliedToSelf(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec,
-	                         FActiveGameplayEffectHandle ActiveEffectHandle);
+	                         FActiveGameplayEffectHandle ActiveEffectHandle) const;
 };

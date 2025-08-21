@@ -3,7 +3,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
-void UOverlayWidgetController::BroadcastInitialValues()
+void UOverlayWidgetController::BroadcastInitialValues() const
 {
 	Super::BroadcastInitialValues();
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);

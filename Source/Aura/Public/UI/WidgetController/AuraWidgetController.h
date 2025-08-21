@@ -47,7 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FAuraWidgetControllerParams& WidgetControllerParams);
 
-	virtual void BroadcastInitialValues();
+	virtual void BroadcastInitialValues() const;
 
 	virtual void BindCallbacksToDependencies();
 

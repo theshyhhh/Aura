@@ -36,7 +36,7 @@ class AURA_API UOverlayWidgetController : public UAuraWidgetController
 	GENERATED_BODY()
 
 public:
-	virtual void BroadcastInitialValues() override;
+	virtual void BroadcastInitialValues() const override;
 
 	virtual void BindCallbacksToDependencies() override;
 

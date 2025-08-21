@@ -8,7 +8,7 @@ void UAuraWidgetController::SetWidgetControllerParams(const FAuraWidgetControlle
 	AttributeSet = WidgetControllerParams.AttributeSet;
 }
 
-void UAuraWidgetController::BroadcastInitialValues()
+void UAuraWidgetController::BroadcastInitialValues() const
 {
 }
 
