@@ -18,7 +18,7 @@ public:
 	//end IEnemyInterface
 
 	//begin ICombatInterface
-	FORCEINLINE virtual int32 GetCharacterLevel() override { return Level; }
+	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
 	//end ICombatInterface
 
 protected:

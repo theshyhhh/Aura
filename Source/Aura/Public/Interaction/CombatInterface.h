@@ -15,5 +15,5 @@ class AURA_API ICombatInterface
 	GENERATED_BODY()
 
 public:
-	virtual int32 GetCharacterLevel();
+	virtual int32 GetCharacterLevel() const;
 };

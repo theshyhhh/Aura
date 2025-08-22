@@ -13,7 +13,7 @@ public:
 	AAuraCharacter();
 
 	//begin ICombatInterface
-	virtual int32 GetCharacterLevel() override;
+	virtual int32 GetCharacterLevel() const override;
 	//end ICombatInterface
 
 protected:
