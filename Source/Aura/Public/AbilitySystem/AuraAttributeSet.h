@@ -46,6 +46,12 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 };
 
+using FGetAttributeFucPtr = FGameplayAttribute(*)();
+//静态函数指针模板
+template <typename RetValType, typename... ParamTypes>
+using TStaticFuncPtr = RetValType(*)(ParamTypes...);
+
+//TBaseStaticDelegateInstance<
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
@@ -60,6 +66,9 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute>> TagsToAttributes;
+
 	/*
 	 * Primary Attributes
 	 */
@@ -116,7 +125,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxHealth);
-	
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
@@ -127,13 +136,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);
-	
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
 
 	//OnRep Begin
-	
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
 

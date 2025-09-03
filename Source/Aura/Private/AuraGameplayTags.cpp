@@ -37,4 +37,17 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Attributes.Secondary.MaxHealth")), FString(TEXT("最大生命值")));
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Attributes.Secondary.MaxMana")), FString(TEXT("最大法力值")));
+	//Input Tag
+	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.LMB")), FString(TEXT("鼠标左键")));
+	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.RMB")), FString(TEXT("鼠标右键")));
+	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.1")), FString(TEXT("数字键1")));
+	GameplayTags.InputTag_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.2")), FString(TEXT("数字键2")));
+	GameplayTags.InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.3")), FString(TEXT("数字键3")));
+	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.4")), FString(TEXT("数字键4")));
 }
