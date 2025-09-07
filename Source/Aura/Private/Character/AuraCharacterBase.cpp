@@ -48,3 +48,8 @@ void AAuraCharacterBase::AddCharacterAbilities()
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
+
+FVector AAuraCharacterBase::GetCombatSocketLocation() const
+{
+	return Weapon->GetSocketLocation(WeaponSocketName);
+}

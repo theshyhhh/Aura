@@ -23,6 +23,8 @@ public:
 
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	virtual FVector GetCombatSocketLocation() const override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,6 +38,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName WeaponSocketName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
