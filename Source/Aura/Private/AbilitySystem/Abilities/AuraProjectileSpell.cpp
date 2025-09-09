@@ -8,16 +8,18 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile()
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	//生成一个投射物，但只在服务器端执行
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); //判断是否是服务器端或者单机
 	if (!bIsServer)return;
 	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (!CombatInterface)return;
+	FRotator Rotation = (ProjectileTargetLocation - CombatInterface->GetCombatSocketLocation()).Rotation();
+	Rotation.Pitch = 0.f;
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(CombatInterface->GetCombatSocketLocation());
-	//TODO:设置投射物旋转
+	SpawnTransform.SetRotation(Rotation.Quaternion());
 	check(ProjectileClass)
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
 	                                                                              Cast<APawn>(GetOwningActorFromActorInfo()),

@@ -18,4 +18,7 @@ public:
 	virtual int32 GetCharacterLevel() const;
 
 	virtual FVector GetCombatSocketLocation() const;
+
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
+	 void SetFacingTarget(const FVector& TargetLocation);
 };

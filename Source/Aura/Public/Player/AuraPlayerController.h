@@ -34,6 +34,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
 	//移动
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -90,6 +93,11 @@ private:
 
 	//鼠标射线检测碰撞信息
 	FHitResult CursorHitResult;
+
+	//是否按下shift
+	bool bShiftPressed = false;
+	void ShiftPressed() { bShiftPressed = true; }
+	void ShiftReleased() { bShiftPressed = false; }
 
 public:
 	UAuraAbilitySystemComponent* GetAuraAbilitySystemComponent();

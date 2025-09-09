@@ -29,16 +29,11 @@ void AAuraPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	//断言：检测AuraContext是否已设置，如果没有设置，则强制停止执行
 	check(AuraContext);
 	//通过本地玩家的增强输入子系统，将InputMappingContext添加给本地玩家，并且可以设置优先级
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		GetLocalPlayer());
-	if (Subsystem)
-	{
-		Subsystem->AddMappingContext(AuraContext, 0);
-	}
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if (Subsystem)Subsystem->AddMappingContext(AuraContext, 0);
 
 	bShowMouseCursor = true;
 	//配置鼠标光标类型
@@ -60,6 +55,8 @@ void AAuraPlayerController::SetupInputComponent()
 	//InputComponent实际上指向的是一个UEnhancedInputComponent，CastChecked相当于Cast+check组合
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &AAuraPlayerController::AbilityInputTagPressed,
 	                                       &AAuraPlayerController::AbilityInputTagReleased, &AAuraPlayerController::AbilityInputTagHeld);
 }
@@ -130,20 +127,12 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 {
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
-		if (GetAuraAbilitySystemComponent())
-		{
-			GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
-		}
+		if (GetAuraAbilitySystemComponent())GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
 		return;
 	}
-	if (bTargeting)
-	{
-		if (GetAuraAbilitySystemComponent())
-		{
-			GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
-		}
-	}
-	else
+	if (GetAuraAbilitySystemComponent())GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
+	//既没有瞄准的目标也没有按下shift时，如果右键按下时间小于最短按下时间，则进行自动寻路
+	if (!bTargeting && !bShiftPressed)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -160,8 +149,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 				bAutoRunning = true;
 			}
 		}
-		FollowTime = 0.f;
 	}
+	FollowTime = 0.f;
 }
 
 /*
@@ -178,7 +167,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag Tag)
 		}
 		return;
 	}
-	if (bTargeting)
+	if (bTargeting || bShiftPressed)
 	{
 		if (GetAuraAbilitySystemComponent())
 		{
@@ -211,10 +200,7 @@ void AAuraPlayerController::AutoRun()
 		ControlledPawn->AddMovementInput(Direction);
 		const float DistanceToDestination = (CachedDestination - LocationOnSpline).Length();
 		//如果距离目标点的距离小于可接受距离则停止自动寻路
-		if (DistanceToDestination < AutoRunAcceptanceRadius)
-		{
-			bAutoRunning = false;
-		}
+		if (DistanceToDestination < AutoRunAcceptanceRadius)bAutoRunning = false;
 	}
 }
 
