@@ -3,7 +3,10 @@
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
+
+class UWidgetComponent;
 
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
@@ -21,6 +24,13 @@ public:
 	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
 	//end ICombatInterface
 
+	//广播生命值变化
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -29,6 +39,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Default")
 	int32 Level = 1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBarComponent;
 
 private:
 	void SetRenderCustomDepth(const bool bValue) const;

@@ -1,4 +1,7 @@
 ﻿#include "AbilitySystem/Abilities/AuraProjectileSpell.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -24,7 +27,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
 	                                                                              Cast<APawn>(GetOwningActorFromActorInfo()),
 	                                                                              ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	//TODO: 给投射物一个用于造成伤害的GE Spec
+	const UAbilitySystemComponent* SourceAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+	Projectile->DamageEffectSpecHandle = SourceAsc->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceAsc->MakeEffectContext());
 
 	Projectile->FinishSpawning(SpawnTransform);
 }
