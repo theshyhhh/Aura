@@ -140,6 +140,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Mana, Category="Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
+	/*
+	 * Meta Attributes
+	 */
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
 
 	//OnRep Begin
 	UFUNCTION()
@@ -193,4 +199,6 @@ public:
 
 private:
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+
+	void ShowDamageText(const FEffectProperties& Props, const float Damage) const;
 };

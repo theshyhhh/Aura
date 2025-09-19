@@ -50,4 +50,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("InputTag.3")), FString(TEXT("数字键3")));
 	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("InputTag.4")), FString(TEXT("数字键4")));
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Damage")), FString(TEXT("伤害")));
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Effects.HitReact")), FString(TEXT("受击反应")));
 }

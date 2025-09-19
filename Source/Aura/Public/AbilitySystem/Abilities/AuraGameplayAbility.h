@@ -15,4 +15,8 @@ public:
 	 */
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	FGameplayTag StartupInputTag;
+
+	//通过曲线表获得伤害值
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Damage")
+	FScalableFloat Damage;
 };

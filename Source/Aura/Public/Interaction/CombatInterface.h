@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
-UINTERFACE()
+UINTERFACE(BlueprintType)
 class UCombatInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -19,6 +19,11 @@ public:
 
 	virtual FVector GetCombatSocketLocation() const;
 
-	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
-	 void SetFacingTarget(const FVector& TargetLocation);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetFacingTarget(const FVector& TargetLocation);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UAnimMontage* GetHitReactMontage() const;
+
+	virtual void Die() =0;
 };

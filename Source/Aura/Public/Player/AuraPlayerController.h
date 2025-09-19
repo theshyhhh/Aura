@@ -5,6 +5,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
+class UDamageTextComponent;
 class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
 struct FInputActionValue;
@@ -21,6 +22,10 @@ public:
 	AAuraPlayerController();
 
 	virtual void PlayerTick(float DeltaTime) override;
+
+	//在目标头顶上显示伤害数字，服务端调用，客户端执行
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter);
 
 protected:
 	virtual void BeginPlay() override;
@@ -98,6 +103,10 @@ private:
 	bool bShiftPressed = false;
 	void ShiftPressed() { bShiftPressed = true; }
 	void ShiftReleased() { bShiftPressed = false; }
+
+	//伤害数字组件类
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 public:
 	UAuraAbilitySystemComponent* GetAuraAbilitySystemComponent();
