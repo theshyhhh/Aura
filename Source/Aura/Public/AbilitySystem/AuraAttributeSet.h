@@ -200,5 +200,5 @@ public:
 private:
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
-	void ShowDamageText(const FEffectProperties& Props, const float Damage) const;
+	void ShowDamageText(const FEffectProperties& Props, const float Damage, const bool bIsBlockedHit, const bool bIsCriticalHit) const;
 };

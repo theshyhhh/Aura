@@ -1,5 +1,6 @@
 ﻿#include "AbilitySystem/ExecCal/ExecCal_Damage.h"
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -60,7 +61,14 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	EvaluateParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
+	float Damage = 0;
+	for (const auto& Pair : Spec.SetByCallerTagMagnitudes)
+	{
+		if (Pair.Key.MatchesTag(FAuraGameplayTags::Get().Damage))
+		{
+			Damage += Pair.Value;
+		}
+	}
 	//捕获目标的格挡几率属性，判断是否成功格挡，如果成功，伤害减半
 	float BlockChance;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluateParams, BlockChance);
@@ -107,6 +115,9 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	const bool bCriticalHit = FMath::RandRange(0.f, 100.f) < EffectiveCriticalChance;
 
 	Damage = bCriticalHit ? Damage * (2 + SourceCriticalHitDamage / 100) : Damage;
+	FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(Spec.GetContext().Get());
+	EffectContext->SetIsBlockedHit(bBlocked);
+	EffectContext->SetIsCriticalHit(bCriticalHit);
 
 
 	const FGameplayModifierEvaluatedData ModifierData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

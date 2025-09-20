@@ -50,8 +50,33 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("InputTag.3")), FString(TEXT("数字键3")));
 	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("InputTag.4")), FString(TEXT("数字键4")));
+	//伤害类型标签
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Damage")), FString(TEXT("伤害")));
+	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Damage.Fire")), FString(TEXT("火焰类型伤害")));
+	GameplayTags.Damage_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Damage.Lightning")), FString(TEXT("闪电类型伤害")));
+	GameplayTags.Damage_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Damage.Arcane")), FString(TEXT("奥术类型伤害")));
+	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Damage.Physical")), FString(TEXT("物理类型伤害")));
+	//伤害抗性标签
+	GameplayTags.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Attributes.Resistance.Fire")), FString(TEXT("火焰伤害抵抗")));
+	GameplayTags.Attributes_Resistance_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Attributes.Resistance.Lightning")), FString(TEXT("闪电伤害抵抗")));
+	GameplayTags.Attributes_Resistance_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Attributes.Resistance.Arcane")), FString(TEXT("奥术伤害抵抗")));
+	GameplayTags.Attributes_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Attributes.Resistance.Physical")), FString(TEXT("物理伤害抵抗")));
+	//添加伤害类型与抗性类型之间的映射
+	GameplayTags.DamageTypeToResistance.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
+	GameplayTags.DamageTypeToResistance.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
+	GameplayTags.DamageTypeToResistance.Add(GameplayTags.Damage_Arcane, GameplayTags.Attributes_Resistance_Arcane);
+	GameplayTags.DamageTypeToResistance.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
+
+	//处于受击状态时添加的标签
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Effects.HitReact")), FString(TEXT("受击反应")));
 }
