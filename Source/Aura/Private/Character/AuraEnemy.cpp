@@ -54,7 +54,7 @@ void AAuraEnemy::BeginPlay()
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	if (HasAuthority())UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
 	if (UAuraUserWidget* HealthBarWidget = Cast<UAuraUserWidget>(HealthBarComponent->GetUserWidgetObject()))
 	{
 		HealthBarWidget->SetWidgetController(this); //自身作为UI的控制器
@@ -84,7 +84,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	InitializeDefaultAttributes();
+	//保证只在服务器上进行初始化行为，属性会同步到客户端，主要因为初始化要使用的角色职业信息在GameMode里，而GameMode只在服务器上存在
+	if (HasAuthority())InitializeDefaultAttributes();
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
