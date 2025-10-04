@@ -161,8 +161,12 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 				{
 					SplineComponent->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 				}
-				CachedDestination = NavPath->PathPoints.Last(); //将目标地点设置为最后一个导航点，防止点击的目标地点无法正确到达导致的一直在自动移动
-				bAutoRunning = true;
+				if (NavPath->PathPoints.Num() > 0)
+				{
+					CachedDestination = NavPath->PathPoints.Last(); //将目标地点设置为最后一个导航点，防止点击的目标地点无法正确到达导致的一直在自动移动
+					bAutoRunning = true;
+				}
+
 			}
 		}
 	}

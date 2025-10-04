@@ -79,4 +79,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	//处于受击状态时添加的标签
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Effects.HitReact")), FString(TEXT("受击反应")));
+	//能力标签
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Attack")), FString(TEXT("攻击能力标签")));
+
+	//根据攻击蒙太奇动画的攻击类型，如用武器攻击，左右手攻击，传输的Tag
+	GameplayTags.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.Weapon")), FString(TEXT("用武器攻击")));
+	GameplayTags.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.RightHand")), FString(TEXT("用右手攻击")));
+	GameplayTags.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.LeftHand")), FString(TEXT("用左手攻击")));
 }

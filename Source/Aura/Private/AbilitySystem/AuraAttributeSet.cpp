@@ -128,6 +128,10 @@ void UAuraAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 		{
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bIsBlockedHit, bIsCriticalHit);
 		}
+		else if (AAuraPlayerController* PC1 = Cast<AAuraPlayerController>(Props.TargetController))
+		{
+			PC1->ShowDamageNumber(Damage, Props.TargetCharacter, bIsBlockedHit, bIsCriticalHit);
+		}
 	}
 }
 

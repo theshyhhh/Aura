@@ -19,14 +19,17 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (!bIsServer)return;
 	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (!CombatInterface)return;
-	const FRotator Rotation = (ProjectileTargetLocation - CombatInterface->GetCombatSocketLocation()).Rotation();
+	const FVector CombatSocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
+		GetAvatarActorFromActorInfo(), FAuraGameplayTags::Get().Montage_Attack_Weapon);
+	const FRotator Rotation = (ProjectileTargetLocation - CombatSocketLocation).Rotation();
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(CombatInterface->GetCombatSocketLocation());
+	SpawnTransform.SetLocation(CombatSocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
 	check(ProjectileClass)
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(),
 	                                                                              Cast<APawn>(GetOwningActorFromActorInfo()),
 	                                                                              ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
 	const UAbilitySystemComponent* SourceAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	FGameplayEffectContextHandle ContextHandle = SourceAsc->MakeEffectContext();
 	ContextHandle.SetAbility(this);

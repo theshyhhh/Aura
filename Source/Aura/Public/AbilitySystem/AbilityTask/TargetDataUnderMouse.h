@@ -6,6 +6,9 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseTargetDataSignature, const FGameplayAbilityTargetDataHandle&, data);
 
+/*
+ *获取鼠标当前位置的异步任务
+ */
 UCLASS()
 class AURA_API UTargetDataUnderMouse : public UAbilityTask
 {

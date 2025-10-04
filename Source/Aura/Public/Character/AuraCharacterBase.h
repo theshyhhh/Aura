@@ -22,12 +22,17 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
-
-	virtual FVector GetCombatSocketLocation() const override;
+	//CombatInterface Begin
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& Tag) const override;
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 
 	virtual void Die() override;
+
+	virtual bool IsDead_Implementation() const override;
+
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
+	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
 	UFUNCTION(NetMulticast, Reliable)
@@ -49,6 +54,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Combat")
 	FName WeaponSocketName;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName RightHandSocketName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -84,6 +95,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
+	bool bDead = false;
+
 private:
 	//初始就拥有的能力
 	UPROPERTY(EditAnywhere, Category="Abilities")
@@ -92,4 +105,8 @@ private:
 	//受击动画
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	//攻击动画和对应的Tag
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	TArray<FTaggedMontage> AttackMontages;
 };

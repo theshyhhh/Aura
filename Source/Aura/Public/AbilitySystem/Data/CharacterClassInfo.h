@@ -7,6 +7,7 @@
 class UGameplayAbility;
 class UGameplayEffect;
 
+//角色职业
 UENUM(BlueprintType)
 enum class ECharacterClass : uint8
 {
@@ -15,6 +16,7 @@ enum class ECharacterClass : uint8
 	Ranger
 };
 
+//职业默认信息
 USTRUCT(BlueprintType)
 struct FCharacterClassDefaultInfo
 {
@@ -24,6 +26,10 @@ public:
 	//每个职业独有的，应用后初始化默认主要属性的GE
 	UPROPERTY(EditDefaultsOnly, Category="Class Defaults")
 	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+
+	//每个职业的能力
+	UPROPERTY(EditDefaultsOnly, Category="Class Defaults")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 };
 
 UCLASS()
@@ -40,7 +46,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 
-	//各个职业的主要属性GE
+	//各个职业的主要属性GE和技能
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
 
@@ -48,6 +54,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
 
+	//伤害计算系数
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Damage")
 	TObjectPtr<UCurveTable> DamageCalculationCoefficient;
 
