@@ -83,12 +83,21 @@ public:
 	//Abilities
 	FGameplayTag Abilities_Attack;
 
-	//Montage Attack Event
-	FGameplayTag Montage_Attack_Weapon;
+	//Attack Socket Tag
+	FGameplayTag CombatSocket_Weapon;
 
-	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag CombatSocket_RightHand;
 
-	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag CombatSocket_LeftHand;
+
+	//Montage Tag
+	FGameplayTag Montage_Attack_1;
+
+	FGameplayTag Montage_Attack_2;
+
+	FGameplayTag Montage_Attack_3;
+
+	FGameplayTag Montage_Attack_4;
 
 private:
 	static FAuraGameplayTags GameplayTags;

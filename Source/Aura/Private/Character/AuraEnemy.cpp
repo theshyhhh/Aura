@@ -60,6 +60,7 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallBackTag, int32 NewCou
 void AAuraEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
+	if (AuraAIController)AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
 	Super::Die();
 }
 

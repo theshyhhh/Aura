@@ -83,11 +83,21 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Attack")), FString(TEXT("攻击能力标签")));
 
-	//根据攻击蒙太奇动画的攻击类型，如用武器攻击，左右手攻击，传输的Tag
-	GameplayTags.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName(TEXT("Montage.Attack.Weapon")), FString(TEXT("用武器攻击")));
-	GameplayTags.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName(TEXT("Montage.Attack.RightHand")), FString(TEXT("用右手攻击")));
-	GameplayTags.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName(TEXT("Montage.Attack.LeftHand")), FString(TEXT("用左手攻击")));
+	//攻击插槽的标签，如用武器攻击，左右手攻击，传输的Tag
+	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("CombatSocket.Weapon")), FString(TEXT("用武器攻击")));
+	GameplayTags.CombatSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("CombatSocket.RightHand")), FString(TEXT("用右手攻击")));
+	GameplayTags.CombatSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("CombatSocket.LeftHand")), FString(TEXT("用左手攻击")));
+
+	//攻击动画的Tag
+	GameplayTags.Montage_Attack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.1")));
+	GameplayTags.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.2")));
+	GameplayTags.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.3")));
+	GameplayTags.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Montage.Attack.4")));
 }

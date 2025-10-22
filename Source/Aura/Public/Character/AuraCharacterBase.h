@@ -6,6 +6,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -32,6 +33,10 @@ public:
 	virtual bool IsDead_Implementation() const override;
 
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
+
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
@@ -49,7 +54,7 @@ protected:
 
 	void AddCharacterAbilities();
 
-	UPROPERTY(EditAnywhere, Category="Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category="Combat")
@@ -96,6 +101,9 @@ protected:
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
 	bool bDead = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraSystem> BloodEffect;
 
 private:
 	//初始就拥有的能力

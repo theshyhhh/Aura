@@ -3,11 +3,11 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Interfaces/IPluginManager.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -46,6 +46,7 @@ void AAuraProjectile::Destroyed()
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		if (LoopingAudioComponent)LoopingAudioComponent->Stop();
+		bHit = true;
 	}
 	Super::Destroyed();
 }
@@ -54,7 +55,7 @@ void AAuraProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
                                            int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//保证角色不会攻击到自己，且客户端还没有触发碰撞，保证生成音效特效只执行一次
-	if (GetOwner() == OtherActor || bHit)return;
+	if (GetOwner() == OtherActor || bHit || !UAuraAbilitySystemLibrary::IsNotFriend(GetOwner(), OtherActor))return;
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	if (LoopingAudioComponent)LoopingAudioComponent->Stop();

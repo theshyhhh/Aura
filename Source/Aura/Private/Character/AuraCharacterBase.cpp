@@ -42,6 +42,23 @@ TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation() co
 	return AttackMontages;
 }
 
+UNiagaraSystem* AAuraCharacterBase::GetBloodEffect_Implementation()
+{
+	return BloodEffect;
+}
+
+FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const
+{
+	for (auto& TaggedMontage : AttackMontages)
+	{
+		if (TaggedMontage.MontageTag.MatchesTagExact(Tag))
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	//武器掉落在地上
@@ -112,15 +129,15 @@ void AAuraCharacterBase::Dissolve()
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& Tag) const
 {
-	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_Weapon) && IsValid(Weapon))
+	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponSocketName);
 	}
-	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_LeftHand))
+	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_LeftHand))
 	{
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
-	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_RightHand))
+	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().CombatSocket_RightHand))
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}
