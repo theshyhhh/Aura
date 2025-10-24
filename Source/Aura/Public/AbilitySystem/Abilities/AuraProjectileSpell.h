@@ -18,7 +18,7 @@ protected:
 
 	//向传入的目标位置生成投射物
 	UFUNCTION(BlueprintCallable, Category="Projectile")
-	void SpawnProjectile(const FVector& ProjectileTargetLocation);
+	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag);
 
 	//生成的投射物的类
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

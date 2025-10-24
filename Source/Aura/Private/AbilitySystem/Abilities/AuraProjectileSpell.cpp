@@ -1,5 +1,4 @@
 ﻿#include "AbilitySystem/Abilities/AuraProjectileSpell.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
@@ -12,7 +11,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag)
 {
 	//生成一个投射物，但只在服务器端执行
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority(); //判断是否是服务器端或者单机
@@ -20,7 +19,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 	if (!CombatInterface)return;
 	const FVector CombatSocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
-		GetAvatarActorFromActorInfo(), FAuraGameplayTags::Get().CombatSocket_Weapon);
+		GetAvatarActorFromActorInfo(), SocketTag);
 	const FRotator Rotation = (ProjectileTargetLocation - CombatSocketLocation).Rotation();
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(CombatSocketLocation);

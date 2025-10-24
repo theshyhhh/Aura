@@ -38,15 +38,15 @@ public:
 
 	void HitReactTagChanged(const FGameplayTag CallBackTag, int32 NewCount);
 
-	UPROPERTY(BlueprintReadOnly, Category="Combat")
+	UPROPERTY(BlueprintReadOnly, Category="Enemy|Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Enemy|Combat")
 	float BaseWalkSpeed = 250.f;
 
 	virtual void Die() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Combat")
 	float LifeSpan = 5.f;
 
 	virtual void PossessedBy(AController* NewController) override;
@@ -61,16 +61,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool bHighlighted;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::Elementalist;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBarComponent;
 
-	UPROPERTY(EditAnywhere, Category="AI")
+	UPROPERTY(EditAnywhere, Category="Enemy|AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
 	UPROPERTY()

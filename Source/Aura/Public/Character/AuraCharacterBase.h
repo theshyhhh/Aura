@@ -54,17 +54,20 @@ protected:
 
 	void AddCharacterAbilities();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
-	UPROPERTY(EditAnywhere, Category="Combat")
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Combat|Socket")
 	FName WeaponSocketName;
 
-	UPROPERTY(EditAnywhere, Category="Combat")
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Combat|Socket")
 	FName LeftHandSocketName;
 
-	UPROPERTY(EditAnywhere, Category="Combat")
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Combat|Socket")
 	FName RightHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Combat|Socket")
+	FName TailSocketName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -73,15 +76,15 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 	//初始化主要属性GE
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
 
 	//持续根据主要属性计算次要属性GE
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
 	//初始化重要属性GE
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Attributes")
 	TSubclassOf<UGameplayEffect> InitVitalAttributes;
 
 
@@ -94,27 +97,27 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<UMaterialInstance> CharacterDissolveMaterialInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
 	bool bDead = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<UNiagaraSystem> BloodEffect;
 
 private:
 	//初始就拥有的能力
-	UPROPERTY(EditAnywhere, Category="Abilities")
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 	//受击动画
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	//攻击动画和对应的Tag
-	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	UPROPERTY(EditDefaultsOnly, Category="AuraCharacter|Combat")
 	TArray<FTaggedMontage> AttackMontages;
 };

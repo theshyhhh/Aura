@@ -90,6 +90,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("CombatSocket.RightHand")), FString(TEXT("用右手攻击")));
 	GameplayTags.CombatSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("CombatSocket.LeftHand")), FString(TEXT("用左手攻击")));
+	GameplayTags.CombatSocket_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("CombatSocket.Tail")), FString(TEXT("用尾巴攻击")));
 
 	//攻击动画的Tag
 	GameplayTags.Montage_Attack_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
