@@ -37,6 +37,10 @@ public:
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& Tag) const override;
+
+	virtual int32 GetMinionCount_Implementation() override;
+
+	virtual void IncreaseMinionCount_Implementation(int32 Amount) override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
@@ -107,6 +111,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Combat")
 	TObjectPtr<UNiagaraSystem> BloodEffect;
+
+	//召唤物数量
+	int32 MinionCount = 0;
 
 private:
 	//初始就拥有的能力

@@ -82,6 +82,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	//能力标签
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Attack")), FString(TEXT("攻击能力标签")));
+	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Summon")), FString(TEXT("召唤能力标签")));
 
 	//攻击插槽的标签，如用武器攻击，左右手攻击，传输的Tag
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(

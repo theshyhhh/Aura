@@ -1,11 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "AbilitySystem/Abilities/AuraSummonAbility.h"
-
-#include <Programs/UnrealBuildAccelerator/Core/Public/UbaBase.h>
-
-#include "Kismet/KismetSystemLibrary.h"
+﻿#include "AbilitySystem/Abilities/AuraSummonAbility.h"
 
 TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 {
@@ -18,11 +11,21 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 	for (int i = 0; i < NumMinions; i++)
 	{
 		const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
-		UKismetSystemLibrary::DrawDebugArrow(AvatarActor, Location, Location + Direction * MaxSpawnDistance, 10.f, FLinearColor::Red, 10);
 		const float Distance = FMath::FRandRange(MinSpawnDistance, MaxSpawnDistance);
-		const FVector SpawnLocation = Location + Direction * Distance;
+		FVector SpawnLocation = Location + Direction * Distance;
+		FHitResult Hit;
+		GetWorld()->LineTraceSingleByChannel(Hit, SpawnLocation + FVector(0, 0, 500.f), SpawnLocation + FVector(0, 0, -500), ECC_Visibility);
+		if (Hit.bBlockingHit)
+		{
+			SpawnLocation = Hit.ImpactPoint;
+		}
 		SpawnLocations.Add(SpawnLocation);
-		UKismetSystemLibrary::DrawDebugSphere(AvatarActor, SpawnLocation, 30, 10, FLinearColor::Green, 10);
 	}
 	return SpawnLocations;
+}
+
+TSubclassOf<APawn> UAuraSummonAbility::GetRandomMinionClass()
+{
+	const int32 Selection = FMath::RandRange(0, MinionClasses.Num() - 1);
+	return MinionClasses[Selection];
 }
