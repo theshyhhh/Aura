@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 
 void UOverlayWidgetController::BroadcastInitialValues() const
 {
@@ -43,20 +44,45 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			OnMaxManaChanged.Broadcast(Data.NewValue);
 		}
 	);
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
-		[this](const FGameplayTagContainer& AssetTags)
-		{
-			for (const FGameplayTag& Tag : AssetTags)
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->EffectAssetTags.AddLambda(
+			[this](const FGameplayTagContainer& AssetTags)
 			{
-				//从配置文件中查找所需的Tag，如果Tag不存在就会报错
-				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Message")));
-				//检测子Tag是否能匹配到父Tag，即传入的Tag是不是Message下的Tag
-				if (!Tag.MatchesTag(MessageTag))continue;
+				for (const FGameplayTag& Tag : AssetTags)
+				{
+					//从配置文件中查找所需的Tag，如果Tag不存在就会报错
+					FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Message")));
+					//检测子Tag是否能匹配到父Tag，即传入的Tag是不是Message下的Tag
+					if (!Tag.MatchesTag(MessageTag))continue;
 
-				const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-				MessageWidgetRowDelegate.Broadcast(*Row);
+					const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+					MessageWidgetRowDelegate.Broadcast(*Row);
+				}
 			}
+		);
+		if (AuraASC->bStartupAbilityHasBeenGiven)
+		{
+			OnInitializeStartupAbility();
 		}
-	);
+		else
+		{
+			AuraASC->OnAbilityGrantedDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbility);
+		}
+	}
 }
 
+void UOverlayWidgetController::OnInitializeStartupAbility()
+{
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	FForEachAbility Delegate;
+	Delegate.BindLambda([this,AuraASC](const FGameplayAbilitySpec& AbilitySpec)-> void
+		{
+			FAuraAbilityInfo Info = AbilityInfo->FindAbilityByTag(AuraASC->GetTagFromAbilitySpec(AbilitySpec));
+			Info.InputTag = AuraASC->GetInputTagFromAbilitySpec(AbilitySpec);
+			AbilityInfoDelegate.Broadcast(Info);
+		}
+	);
+	//遍历所有能力并通过委托传递AbilitySpec，在通过委托广播能力的信息给UI控件
+	AuraASC->ForEachAbility(Delegate);
+}
