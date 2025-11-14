@@ -87,6 +87,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Fire.FireBolt")), FString(TEXT("火球术标签")));
 
+	//冷却标签
+	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Cooldown.Fire.FireBolt")), FString(TEXT("火球术冷却标签")));
+
 	//攻击插槽的标签，如用武器攻击，左右手攻击，传输的Tag
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("CombatSocket.Weapon")), FString(TEXT("用武器攻击")));
