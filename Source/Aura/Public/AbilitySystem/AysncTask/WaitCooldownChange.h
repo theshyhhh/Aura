@@ -11,7 +11,7 @@ class UAbilitySystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCooldownChangedSiganature, float, Time);
 
-UCLASS()
+UCLASS(BlueprintType, meta=(ExposedAsyncProxy="AsyncTask"))
 class AURA_API UWaitCooldownChange : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
