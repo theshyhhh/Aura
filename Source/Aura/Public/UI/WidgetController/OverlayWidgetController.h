@@ -62,6 +62,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|XP")
+	FOnAttributeChangedSignature OnXPChangedDelegate;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="WidgetData")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
@@ -73,6 +76,8 @@ protected:
 	const T* GetDataTableRowByTag(const UDataTable* DataTable, const FGameplayTag& Tag);
 
 	void OnInitializeStartupAbility();
+
+	void OnXPChanged(int32 NewXP);
 };
 
 template <typename T>
