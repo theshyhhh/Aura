@@ -37,6 +37,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Attributes.Secondary.MaxHealth")), FString(TEXT("最大生命值")));
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Attributes.Secondary.MaxMana")), FString(TEXT("最大法力值")));
+	//Meta Attributes
+	GameplayTags.Attributes_Meta_InComingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Attributes.Meta.InComingXP")), FString(TEXT("传入的经验值元数据")));
 	//Input Tag
 	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("InputTag.LMB")), FString(TEXT("鼠标左键")));

@@ -22,6 +22,8 @@ public:
 	//添加一开始就拥有的技能
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
+	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
+
 	FEffectAssetTags EffectAssetTags;
 
 	//按下和持续按住触发的函数

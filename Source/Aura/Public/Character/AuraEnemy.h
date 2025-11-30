@@ -64,8 +64,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	int32 Level = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
-	ECharacterClass CharacterClass = ECharacterClass::Elementalist;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBarComponent;

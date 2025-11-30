@@ -100,7 +100,7 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 	const int32 Level = LevelUpInfo->FindLevelByXP(NewXP);
 	if (Level == 1)
 	{
-		OnXPChangedDelegate.Broadcast(NewXP / LevelUpInfo->LevelUpInfo[Level - 1].RequiredXP);
+		OnXPChangedDelegate.Broadcast(static_cast<float>(NewXP) / static_cast<float>(LevelUpInfo->LevelUpInfo[Level - 1].RequiredXP));
 	}
 	else
 	{

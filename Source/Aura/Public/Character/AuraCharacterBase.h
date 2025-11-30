@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
@@ -41,6 +42,8 @@ public:
 	virtual int32 GetMinionCount_Implementation() override;
 
 	virtual void IncreaseMinionCount_Implementation(int32 Amount) override;
+
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
@@ -115,10 +118,16 @@ protected:
 	//召唤物数量
 	int32 MinionCount = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
+	ECharacterClass CharacterClass = ECharacterClass::Elementalist;
+
 private:
 	//初始就拥有的能力
 	UPROPERTY(EditAnywhere, Category="AuraCharacter|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditAnywhere, Category="AuraCharacter|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 	//受击动画
 	UPROPERTY(EditDefaultsOnly, Category="AuraCharacter|Combat")

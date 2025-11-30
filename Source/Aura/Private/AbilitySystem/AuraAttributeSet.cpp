@@ -3,8 +3,10 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Aura/AuraLogChannel.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
 
@@ -113,9 +115,20 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					CombatInterface->Die();
 				}
+				SendXPEvent(Props);
 			}
 			ShowDamageText(Props, LocalIncomingDamage, UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle),
 			               UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle));
+		}
+	}
+	else if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.f);
+		UE_LOG(LogAura, Log, TEXT("InComingXP为%f"), LocalIncomingXP);
+		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			IPlayerInterface::Execute_AddXP(Props.SourceCharacter, LocalIncomingXP);
 		}
 	}
 }
@@ -132,6 +145,22 @@ void UAuraAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 		{
 			PC1->ShowDamageNumber(Damage, Props.TargetCharacter, bIsBlockedHit, bIsCriticalHit);
 		}
+	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+	{
+		const int32 TargetLevel = CombatInterface->GetCharacterLevel();
+		const ECharacterClass TargetClass = CombatInterface->Execute_GetCharacterClass(Props.TargetAvatarActor);
+		const int XPReward = UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(Props.TargetAvatarActor, TargetClass, TargetLevel);
+
+		FGameplayEventData Payload;
+		Payload.EventTag = FAuraGameplayTags::Get().Attributes_Meta_InComingXP;
+		Payload.EventMagnitude = XPReward;
+		UE_LOG(LogAura, Error, TEXT("XPReward: %f"), Payload.EventMagnitude);
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, FAuraGameplayTags::Get().Attributes_Meta_InComingXP, Payload);
 	}
 }
 
