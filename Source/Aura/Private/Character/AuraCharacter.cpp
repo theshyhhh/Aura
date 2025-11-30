@@ -21,7 +21,7 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationRoll = false;
 }
 
-int32 AAuraCharacter::GetCharacterLevel() const
+int32 AAuraCharacter::GetCharacterLevel_Implementation() const
 {
 	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
@@ -58,6 +58,11 @@ void AAuraCharacter::AddXP_Implementation(int32 InXP)
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->AddXP(InXP);
+}
+
+void AAuraCharacter::LevelUp_Implementation()
+{
+	IPlayerInterface::LevelUp_Implementation();
 }
 
 void AAuraCharacter::InitAbilityActorInfo()

@@ -150,10 +150,10 @@ void UAuraAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+	if (Props.TargetAvatarActor->Implements<UCombatInterface>())
 	{
-		const int32 TargetLevel = CombatInterface->GetCharacterLevel();
-		const ECharacterClass TargetClass = CombatInterface->Execute_GetCharacterClass(Props.TargetAvatarActor);
+		const int32 TargetLevel = ICombatInterface::Execute_GetCharacterLevel(Props.TargetCharacter);
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetAvatarActor);
 		const int XPReward = UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(Props.TargetAvatarActor, TargetClass, TargetLevel);
 
 		FGameplayEventData Payload;

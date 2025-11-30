@@ -114,9 +114,9 @@ void AAuraCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
-	ApplyEffectToSelf(DefaultPrimaryAttributes, GetCharacterLevel());
-	ApplyEffectToSelf(DefaultSecondaryAttributes, GetCharacterLevel());
-	ApplyEffectToSelf(InitVitalAttributes, GetCharacterLevel());
+	ApplyEffectToSelf(DefaultPrimaryAttributes, Execute_GetCharacterLevel(this));
+	ApplyEffectToSelf(DefaultSecondaryAttributes, Execute_GetCharacterLevel(this));
+	ApplyEffectToSelf(InitVitalAttributes, Execute_GetCharacterLevel(this));
 }
 
 void AAuraCharacterBase::AddCharacterAbilities()

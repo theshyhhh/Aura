@@ -26,7 +26,7 @@ public:
 	//end IEnemyInterface
 
 	//begin ICombatInterface
-	FORCEINLINE virtual int32 GetCharacterLevel() const override { return Level; }
+	FORCEINLINE virtual int32 GetCharacterLevel_Implementation() const override { return Level; }
 	//end ICombatInterface
 
 	//广播生命值变化
@@ -63,7 +63,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	int32 Level = 1;
-
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

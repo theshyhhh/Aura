@@ -14,7 +14,7 @@ public:
 	AAuraCharacter();
 
 	//begin ICombatInterface
-	virtual int32 GetCharacterLevel() const override;
+	virtual int32 GetCharacterLevel_Implementation() const override;
 	//end ICombatInterface
 
 protected:
@@ -29,6 +29,8 @@ public:
 
 	//PlayerInterface Begin
 	virtual void AddXP_Implementation(int32 InXP) override;
+
+	virtual void LevelUp_Implementation() override;
 	//PlayerInterfaceEnd
 
 private:
