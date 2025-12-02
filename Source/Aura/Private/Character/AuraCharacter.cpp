@@ -1,6 +1,7 @@
 ﻿#include "Character/AuraCharacter.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
@@ -53,7 +54,7 @@ void AAuraCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
-void AAuraCharacter::AddXP_Implementation(int32 InXP)
+void AAuraCharacter::AddXP_Implementation(const int32 InXP)
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
@@ -63,6 +64,20 @@ void AAuraCharacter::AddXP_Implementation(int32 InXP)
 void AAuraCharacter::LevelUp_Implementation()
 {
 	IPlayerInterface::LevelUp_Implementation();
+}
+
+int32 AAuraCharacter::GetXP_Implementation() const
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerXP();
+}
+
+int32 AAuraCharacter::FindLevelByXP_Implementation(const int32 XP)
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->LevelUpInfo->FindLevelByXP(XP);
 }
 
 void AAuraCharacter::InitAbilityActorInfo()

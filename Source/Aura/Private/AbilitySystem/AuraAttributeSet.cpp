@@ -123,11 +123,22 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	}
 	else if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
+		//IncomingXP的修改来自于经验获得者本身，它是由GA_EventBasedEffect对自身应用的GE
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
-		UE_LOG(LogAura, Log, TEXT("InComingXP为%f"), LocalIncomingXP);
-		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
 		{
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+			const int32 CurrentLevel = ICombatInterface::Execute_GetCharacterLevel(Props.SourceCharacter);
+
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelByXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+
+			const int32 NumOfLevelsGained = NewLevel - CurrentLevel;
+			if (NumOfLevelsGained > 0)
+			{
+				//TODO:查询升级获得的属性点和技能点,回满生命值和法力值
+			}
+
 			IPlayerInterface::Execute_AddXP(Props.SourceCharacter, LocalIncomingXP);
 		}
 	}
