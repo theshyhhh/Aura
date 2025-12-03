@@ -22,6 +22,10 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
 	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	AuraPlayerState->OnLevelChangedDelegate.AddLambda([this](int32 NewLevel)-> void
+	{
+		OnLevelChangedDelegate.Broadcast(NewLevel);
+	});
 
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	//绑定当对应属性值变化使，想要调用的回调函数

@@ -136,7 +136,12 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			const int32 NumOfLevelsGained = NewLevel - CurrentLevel;
 			if (NumOfLevelsGained > 0)
 			{
-				//TODO:查询升级获得的属性点和技能点,回满生命值和法力值
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter, NewLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter, NewLevel);
+				IPlayerInterface::Execute_AddPlayerLevel(Props.SourceCharacter, NumOfLevelsGained);
+				IPlayerInterface::Execute_AddAttributePoint(Props.SourceCharacter, AttributePointsReward);
+				IPlayerInterface::Execute_AddSpellPoint(Props.SourceCharacter, SpellPointsReward);
+				//设置生命值法力为最大值
 			}
 
 			IPlayerInterface::Execute_AddXP(Props.SourceCharacter, LocalIncomingXP);
