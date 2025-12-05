@@ -141,6 +141,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				IPlayerInterface::Execute_AddPlayerLevel(Props.SourceCharacter, NumOfLevelsGained);
 				IPlayerInterface::Execute_AddAttributePoint(Props.SourceCharacter, AttributePointsReward);
 				IPlayerInterface::Execute_AddSpellPoint(Props.SourceCharacter, SpellPointsReward);
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 				//设置生命值法力为最大值
 			}
 
