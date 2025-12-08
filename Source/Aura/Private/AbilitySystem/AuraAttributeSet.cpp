@@ -143,6 +143,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				IPlayerInterface::Execute_AddSpellPoint(Props.SourceCharacter, SpellPointsReward);
 				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 				//设置生命值法力为最大值
+				bFullyRestoreHealth = true;
+				bFullyRestoreMana = true;
 			}
 
 			IPlayerInterface::Execute_AddXP(Props.SourceCharacter, LocalIncomingXP);
@@ -176,7 +178,6 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 		FGameplayEventData Payload;
 		Payload.EventTag = FAuraGameplayTags::Get().Attributes_Meta_InComingXP;
 		Payload.EventMagnitude = XPReward;
-		UE_LOG(LogAura, Error, TEXT("XPReward: %f"), Payload.EventMagnitude);
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, FAuraGameplayTags::Get().Attributes_Meta_InComingXP, Payload);
 	}
 }
@@ -285,6 +286,21 @@ void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) co
 void UAuraAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Mana, OldMana);
+}
+
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+	if (Attribute == GetMaxHealthAttribute() && bFullyRestoreHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bFullyRestoreHealth = false;
+	}
+	else if (Attribute == GetMaxManaAttribute() && bFullyRestoreMana)
+	{
+		SetMana(GetMaxMana());
+		bFullyRestoreMana = false;
+	}
 }
 
 //OnRepEnd

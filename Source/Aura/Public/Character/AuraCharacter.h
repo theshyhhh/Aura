@@ -49,6 +49,10 @@ public:
 	virtual void AddAttributePoint_Implementation(const int32 InAttributePoint) override;
 
 	virtual void AddSpellPoint_Implementation(const int32 InSpellPoint) override;
+
+	virtual int32 GetPlayerAttributePoint_Implementation() const override;
+
+	virtual int32 GetPlayerSpellPoint_Implementation() const override;
 	//PlayerInterfaceEnd
 
 protected:

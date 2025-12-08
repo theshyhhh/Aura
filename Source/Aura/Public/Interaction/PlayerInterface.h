@@ -44,4 +44,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void AddSpellPoint(const int32 InSpellPoint);
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetPlayerAttributePoint() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetPlayerSpellPoint() const;
 };

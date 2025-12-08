@@ -1,7 +1,10 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Aura/AuraLogChannel.h"
+#include "Interaction/PlayerInterface.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -105,6 +108,17 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromAbilitySpec(const FGame
 	return FGameplayTag();
 }
 
+void UAuraAbilitySystemComponent::UpgradeAttribute(FGameplayTag AttributeTag)
+{
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		if (IPlayerInterface::Execute_GetPlayerAttributePoint(GetAvatarActor()) > 0)
+		{
+			ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -122,4 +136,15 @@ void UAuraAbilitySystemComponent::ClientEffectAppliedToSelf_Implementation(UAbil
 	FGameplayTagContainer TagContainer;
 	EffectSpec.GetAllAssetTags(TagContainer);
 	EffectAssetTags.Broadcast(TagContainer);
+}
+
+void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(FGameplayTag AttributeTag)
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1.0f;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+
+	IPlayerInterface::Execute_AddAttributePoint(GetAvatarActor(), -1);
 }

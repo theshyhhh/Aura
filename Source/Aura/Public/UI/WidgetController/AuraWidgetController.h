@@ -7,6 +7,8 @@
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedMultiSignature, int32, NewValue);
+
 USTRUCT(BlueprintType)
 struct FAuraWidgetControllerParams
 {
@@ -18,10 +20,10 @@ struct FAuraWidgetControllerParams
 
 	FAuraWidgetControllerParams(APlayerController* PlayerController, APlayerState* PlayerState,
 	                            UAbilitySystemComponent* AbilitySystemComponent,
-	                            UAttributeSet* AttributeSet): PlayerController(PlayerController),
-	                                                          PlayerState(PlayerState),
-	                                                          AbilitySystemComponent(AbilitySystemComponent),
-	                                                          AttributeSet(AttributeSet)
+	                            UAttributeSet* AttributeSet) : PlayerController(PlayerController),
+	                                                           PlayerState(PlayerState),
+	                                                           AbilitySystemComponent(AbilitySystemComponent),
+	                                                           AttributeSet(AttributeSet)
 	{
 	}
 

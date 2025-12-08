@@ -44,9 +44,15 @@ public:
 
 	FGameplayTag GetInputTagFromAbilitySpec(const FGameplayAbilitySpec& AbilitySpec);
 
+	void UpgradeAttribute(FGameplayTag AttributeTag);
+
 protected:
 	UFUNCTION(Client, Reliable) //保证在客户端调用
 	void ClientEffectAppliedToSelf(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec,
 	                               FActiveGameplayEffectHandle ActiveEffectHandle) const;
 	virtual void OnRep_ActivateAbilities() override;
+
+private:
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAttribute(FGameplayTag AttributeTag);
 };
