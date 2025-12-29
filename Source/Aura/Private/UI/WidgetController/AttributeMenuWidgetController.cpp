@@ -5,22 +5,19 @@
 #include "AbilitySystem/Data/AttributeInfo.h"
 #include "Player/AuraPlayerState.h"
 
-void UAttributeMenuWidgetController::BroadcastInitialValues() const
+void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo)
-	for (const auto& Pair : AuraAttributeSet->TagsToAttributes)
+	for (const auto& Pair : GetAuraAttributeSet()->TagsToAttributes)
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
-	OnAttributePointChangedDelegate.Broadcast(AuraPlayerState->GetAttributePoint());
+	OnAttributePointChangedDelegate.Broadcast(GetAuraPlayerState()->GetAttributePoint());
 }
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-	for (const auto& Pair : AuraAttributeSet->TagsToAttributes)
+	for (const auto& Pair : GetAuraAttributeSet()->TagsToAttributes)
 	{
 		//绑定属性变更时触发的委托
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
@@ -29,8 +26,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 				BroadcastAttributeInfo(Pair.Key, Pair.Value());
 			});
 	}
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
-	AuraPlayerState->OnAttributePointChangedDelegate.AddLambda([this](int32 NewValue)-> void
+	GetAuraPlayerState()->OnAttributePointChangedDelegate.AddLambda([this](int32 NewValue)-> void
 	{
 		OnAttributePointChangedDelegate.Broadcast(NewValue);
 	});
@@ -38,8 +34,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::UpgradeAttribute(FGameplayTag AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	AuraASC->UpgradeAttribute(AttributeTag);
+	GetAuraAbilitySystemComponent()->UpgradeAttribute(AttributeTag);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const

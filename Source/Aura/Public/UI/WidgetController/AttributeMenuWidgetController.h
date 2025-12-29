@@ -18,7 +18,7 @@ class AURA_API UAttributeMenuWidgetController : public UAuraWidgetController
 
 public:
 	//广播初始值
-	virtual void BroadcastInitialValues() const override;
+	virtual void BroadcastInitialValues() override;
 
 	//绑定委托
 	virtual void BindCallbacksToDependencies() override;

@@ -23,4 +23,7 @@ protected:
 	//生成的投射物的类
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 NumOfProjectiles = 5;
 };

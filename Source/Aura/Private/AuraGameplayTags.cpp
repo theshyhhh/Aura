@@ -53,6 +53,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("InputTag.3")), FString(TEXT("数字键3")));
 	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("InputTag.4")), FString(TEXT("数字键4")));
+	GameplayTags.InputTag_Passive_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.Passive.1")), FString(TEXT("被动技能1")));
+	GameplayTags.InputTag_Passive_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("InputTag.Passive.2")), FString(TEXT("被动技能2")));
 	//伤害类型标签
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Damage")), FString(TEXT("伤害")));
@@ -64,6 +68,27 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Damage.Arcane")), FString(TEXT("奥术类型伤害")));
 	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Damage.Physical")), FString(TEXT("物理类型伤害")));
+	//Debuff标签
+	GameplayTags.Debuff_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Burn")), FString(TEXT("燃烧状态")));
+	GameplayTags.Debuff_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Stun")), FString(TEXT("眩晕状态")));
+	GameplayTags.Debuff_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Arcane")), FString(TEXT("奥术状态")));
+	GameplayTags.Debuff_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Physical")), FString(TEXT("物理状态")));
+	GameplayTags.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Chance")), FString(TEXT("Debuff施加几率")));
+	GameplayTags.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Damage")), FString(TEXT("Debuff造成的伤害")));
+	GameplayTags.Debuff_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Duration")), FString(TEXT("Debuff持续时间")));
+	GameplayTags.Debuff_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Debuff.Frequency")), FString(TEXT("Debuff触发间隔")));
+	GameplayTags.DamageTypeToDebuff.Add(GameplayTags.Damage_Fire, GameplayTags.Debuff_Burn);
+	GameplayTags.DamageTypeToDebuff.Add(GameplayTags.Damage_Lightning, GameplayTags.Debuff_Stun);
+	GameplayTags.DamageTypeToDebuff.Add(GameplayTags.Damage_Arcane, GameplayTags.Debuff_Arcane);
+	GameplayTags.DamageTypeToDebuff.Add(GameplayTags.Damage_Physical, GameplayTags.Debuff_Physical);
 	//伤害抗性标签
 	GameplayTags.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Attributes.Resistance.Fire")), FString(TEXT("火焰伤害抵抗")));
@@ -83,12 +108,32 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Effects.HitReact")), FString(TEXT("受击反应")));
 	//能力标签
+	GameplayTags.Abilities_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.None")), FString(TEXT("无")));
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Attack")), FString(TEXT("攻击能力标签")));
 	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Summon")), FString(TEXT("召唤能力标签")));
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Fire.FireBolt")), FString(TEXT("火球术标签")));
+	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Lightning.Electrocute")), FString(TEXT("闪电术标签")));
+	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.HitReact")), FString(TEXT("受击反应标签")));
+	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Status.Locked")), FString(TEXT("技能为锁定状态")));
+	GameplayTags.Abilities_Status_Eligible = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Status.Eligible")), FString(TEXT("技能为可解锁状态")));
+	GameplayTags.Abilities_Status_Unlocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Status.Unlocked")), FString(TEXT("技能为已解锁状态")));
+	GameplayTags.Abilities_Status_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Status.Equipped")), FString(TEXT("技能为已装备状态")));
+	GameplayTags.Abilities_Type_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Type.Offensive")), FString(TEXT("主动技能")));
+	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Type.Passive")), FString(TEXT("被动技能")));
+	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Type.None")), FString(TEXT("无类型技能")));
 
 	//冷却标签
 	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(

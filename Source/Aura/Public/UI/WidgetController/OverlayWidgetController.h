@@ -5,8 +5,6 @@
 #include "GameplayTagContainer.h"
 #include "OverlayWidgetController.generated.h"
 
-struct FAuraAbilityInfo;
-class UAbilityInfo;
 class UAuraUserWidget;
 struct FOnAttributeChangeData;
 
@@ -32,15 +30,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, const FUIWidgetRow&, Row);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
-
 UCLASS(BlueprintType, Blueprintable)
 class AURA_API UOverlayWidgetController : public UAuraWidgetController
 {
 	GENERATED_BODY()
 
 public:
-	virtual void BroadcastInitialValues() const override;
+	virtual void BroadcastInitialValues() override;
 
 	virtual void BindCallbacksToDependencies() override;
 
@@ -59,9 +55,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
-	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
-	FAbilityInfoSignature AbilityInfoDelegate;
-
 	UPROPERTY(BlueprintAssignable, Category="GAS|XP")
 	FOnAttributeChangedSignature OnXPChangedDelegate;
 
@@ -72,15 +65,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="WidgetData")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="WidgetData")
-	TObjectPtr<UAbilityInfo> AbilityInfo;
-
 	template <typename T>
 	const T* GetDataTableRowByTag(const UDataTable* DataTable, const FGameplayTag& Tag);
 
-	void OnInitializeStartupAbility();
-
 	void OnXPChanged(int32 NewXP);
+	
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& InputTag,
+						   const FGameplayTag& PrevInputTag)const;
 };
 
 template <typename T>

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayAbility.h"
 #include "AuraDamageGameplayAbility.generated.h"
 
@@ -16,9 +17,26 @@ protected:
 
 	//通过曲线表获得伤害值
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	FGameplayTag DamageType;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DebuffChance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DebuffDamage;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DebuffFrequency;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DebuffDuration;
 
 	//对目标应用GE且使用SetByCaller传入伤害及伤害类型
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);
+
+	FDamageEffectParams MakeDamageEffectParamFromClassDefaults(AActor* TargetActor = nullptr);
 };

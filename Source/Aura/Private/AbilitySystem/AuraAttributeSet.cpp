@@ -136,8 +136,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			const int32 NumOfLevelsGained = NewLevel - CurrentLevel;
 			if (NumOfLevelsGained > 0)
 			{
-				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter, NewLevel);
-				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter, NewLevel);
+				int32 AttributePointsReward = 0;
+				int32 SpellPointsReward = 0;
+				for (int32 i = CurrentLevel + 1; i <= NewLevel; i++)
+				{
+					AttributePointsReward += IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter, i);
+					SpellPointsReward += IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter, i);
+				}
 				IPlayerInterface::Execute_AddPlayerLevel(Props.SourceCharacter, NumOfLevelsGained);
 				IPlayerInterface::Execute_AddAttributePoint(Props.SourceCharacter, AttributePointsReward);
 				IPlayerInterface::Execute_AddSpellPoint(Props.SourceCharacter, SpellPointsReward);
