@@ -92,6 +92,7 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	}
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+	FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(Spec.GetContext().Get());
 	FAggregatorEvaluateParameters EvaluateParams;
 	EvaluateParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
@@ -106,8 +107,15 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(TagToCaptureDef[AuraTags.DamageTypeToResistance[Pair.Key]], EvaluateParams,
 		                                                           Resistance);
 		Resistance = FMath::Max(Resistance, 0.f);
-		const float EffectiveChance = DebuffChance * (100.f - Resistance) / 100.f;
-		const bool bIsEffective = FMath::RandRange(0.f, 100.f) <= EffectiveChance;
+		//是否成功施加Debuff
+		if (FMath::RandRange(0.f, 100.f) <= DebuffChance * (100.f - Resistance) / 100.f)
+		{
+			EffectContext->SetDebuffAppliedSuccessfully(true);
+			EffectContext->SetDamageType(Pair.Key);
+			EffectContext->SetDebuffDamage(Spec.GetSetByCallerMagnitude(AuraTags.Debuff_Damage, false, -1));
+			EffectContext->SetDebuffDuration(Spec.GetSetByCallerMagnitude(AuraTags.Debuff_Duration, false, -1));
+			EffectContext->SetDebuffFrequency(Spec.GetSetByCallerMagnitude(AuraTags.Debuff_Frequency, false, -1));
+		}
 	}
 	//处理直接伤害相关
 	float Damage = 0;
@@ -169,7 +177,7 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	const bool bCriticalHit = FMath::RandRange(0.f, 100.f) < EffectiveCriticalChance;
 
 	Damage = bCriticalHit ? Damage * (2 + SourceCriticalHitDamage / 100) : Damage;
-	FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(Spec.GetContext().Get());
+
 	EffectContext->SetIsBlockedHit(bBlocked);
 	EffectContext->SetIsCriticalHit(bCriticalHit);
 

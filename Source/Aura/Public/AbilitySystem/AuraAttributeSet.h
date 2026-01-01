@@ -19,8 +19,6 @@ struct FEffectProperties
 	{
 	}
 
-	FGameplayEffectContextHandle EffectContextHandle;
-
 	UPROPERTY()
 	UAbilitySystemComponent* SourceASC = nullptr;
 
@@ -44,6 +42,8 @@ struct FEffectProperties
 
 	UPROPERTY()
 	ACharacter* TargetCharacter = nullptr;
+
+	FGameplayEffectContextHandle EffectContextHandle;
 };
 
 using FGetAttributeFucPtr = FGameplayAttribute(*)();
@@ -237,6 +237,12 @@ private:
 	void ShowDamageText(const FEffectProperties& Props, const float Damage, const bool bIsBlockedHit, const bool bIsCriticalHit) const;
 
 	void SendXPEvent(const FEffectProperties& Props);
+
+	void HandleXP(const FEffectProperties& Props);
+
+	void HandleDamage(const FEffectProperties& Props);
+
+	void HandleDebuff(const FEffectProperties& Props);
 
 	bool bFullyRestoreHealth = false;
 
