@@ -38,5 +38,5 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);
 
-	FDamageEffectParams MakeDamageEffectParamFromClassDefaults(AActor* TargetActor = nullptr);
+	FDamageEffectParams MakeDamageEffectParamFromClassDefaults(AActor* TargetActor = nullptr) const;
 };

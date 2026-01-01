@@ -10,7 +10,7 @@ struct FDamageEffectParams
 {
 	GENERATED_BODY()
 
-	FDamageEffectParams();
+	FDamageEffectParams() = default;
 
 	UPROPERTY()
 	TObjectPtr<UObject> WorldContextObject = nullptr;
@@ -19,10 +19,10 @@ struct FDamageEffectParams
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> SourceGameplayAbilitySystem;
+	TObjectPtr<UAbilitySystemComponent> SourceGameplayAbilitySystem = nullptr;
 
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> TargetGameplayAbilitySystem;
+	TObjectPtr<UAbilitySystemComponent> TargetGameplayAbilitySystem = nullptr;
 
 	UPROPERTY()
 	float BaseDamage = 0.0f;
@@ -56,9 +56,30 @@ public:
 
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 
+	bool IsDebuffAppliedSuccessfully() const { return bDebuffAppliedSuccessfully; }
+
+	float GetDebuffDamage() const { return DebuffDamage; }
+
+	float GetDebuffDuration() const { return DebuffDuration; }
+
+	float GetDebuffFrequency() const { return DebuffFrequency; }
+
+	FGameplayTag GetDamageType() const { return *DamageType; }
+
 	void SetIsBlockedHit(const bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 
 	void SetIsCriticalHit(const bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+
+	void SetDebuffAppliedSuccessfully(const bool bInDebuffAppliedSuccessfully) { bDebuffAppliedSuccessfully = bInDebuffAppliedSuccessfully; }
+
+	void SetDebuffDamage(const float InDebuffDamage) { DebuffDamage = InDebuffDamage; }
+
+	void SetDebuffDuration(const float InDebuffDuration) { DebuffDuration = InDebuffDuration; }
+
+	void SetDebuffFrequency(const float InDebuffFrequency) { DebuffFrequency = InDebuffFrequency; }
+
+	void SetDamageType(FGameplayTag InDamageType) { DamageType = MakeShared<FGameplayTag>(InDamageType); }
+
 
 	//必须重载
 	virtual UScriptStruct* GetScriptStruct() const override
@@ -88,6 +109,20 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bDebuffAppliedSuccessfully = false;
+
+	UPROPERTY()
+	float DebuffDamage = 0.f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.f;
+
+	UPROPERTY()
+	float DebuffFrequency = 0.f;
+
+	TSharedPtr<FGameplayTag> DamageType;
 };
 
 template <>

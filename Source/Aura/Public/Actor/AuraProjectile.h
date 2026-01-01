@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "AuraProjectile.generated.h"
@@ -22,6 +23,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn=true))
 	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
+	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn=true))
+	FDamageEffectParams DamageEffectParams;
 
 protected:
 	virtual void BeginPlay() override;

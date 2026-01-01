@@ -12,7 +12,19 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* Target)
 	                                                                          UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target));
 }
 
-FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamFromClassDefaults(AActor* TargetActor)
+FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamFromClassDefaults(AActor* TargetActor) const
 {
-	return FDamageEffectParams();
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.DamageGameplayEffectClass = DamageEffectClass;
+	Params.SourceGameplayAbilitySystem = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetGameplayAbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.DamageType = DamageType;
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffDuration = DebuffDuration;
+	Params.DebuffFrequency = DebuffFrequency;
+	return Params;
 }

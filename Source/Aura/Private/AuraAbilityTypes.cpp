@@ -3,13 +3,14 @@
 bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
 {
 	uint32 RepBits = 0;
+	//写入端，先判断哪些变量需要写入
 	if (Ar.IsSaving())
 	{
 		if (bReplicateInstigator && Instigator.IsValid())
 		{
 			RepBits |= 1 << 0;
 		}
-		if (bReplicateEffectCauser && EffectCauser.IsValid() )
+		if (bReplicateEffectCauser && EffectCauser.IsValid())
 		{
 			RepBits |= 1 << 1;
 		}
@@ -41,8 +42,29 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 8;
 		}
+		if (bDebuffAppliedSuccessfully)
+		{
+			RepBits |= 1 << 9;
+		}
+		if (DebuffDamage > 0.f)
+		{
+			RepBits |= 1 << 10;
+		}
+		if (DebuffDuration > 0.f)
+		{
+			RepBits |= 1 << 11;
+		}
+		if (DebuffFrequency > 0.f)
+		{
+			RepBits |= 1 << 12;
+		}
+		if (DamageType.IsValid())
+		{
+			RepBits |= 1 << 13;
+		}
 	}
-	Ar.SerializeBits(&RepBits, 9);
+	//同步Repbits
+	Ar.SerializeBits(&RepBits, 14);
 
 	if (RepBits & (1 << 0))
 	{
@@ -70,7 +92,7 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			if (!HitResult.IsValid())
 			{
-				HitResult = TSharedPtr<FHitResult>(new FHitResult());
+				HitResult = MakeShared<FHitResult>();
 			}
 		}
 		HitResult->NetSerialize(Ar, Map, bOutSuccess);
@@ -84,8 +106,32 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 	{
 		bHasWorldOrigin = false;
 	}
-	bIsBlockedHit =RepBits & (1 << 7);
-	bIsCriticalHit =RepBits & (1 << 8);
+	bIsBlockedHit = RepBits & (1 << 7);
+	bIsCriticalHit = RepBits & (1 << 8);
+	bDebuffAppliedSuccessfully = RepBits & (1 << 9);
+	if (RepBits & (1 << 10))
+	{
+		Ar << DebuffDamage;
+	}
+	if (RepBits & (1 << 11))
+	{
+		Ar << DebuffDuration;
+	}
+	if (RepBits & (1 << 12))
+	{
+		Ar << DebuffFrequency;
+	}
+	if (RepBits & (1 << 13))
+	{
+		if (Ar.IsLoading())
+		{
+			if (!DamageType.IsValid())
+			{
+				DamageType = MakeShared<FGameplayTag>();
+			}
+		}
+		DamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
 	if (Ar.IsLoading())
 	{
 		AddInstigator(Instigator.Get(), EffectCauser.Get()); // Just to initialize InstigatorAbilitySystemComponent

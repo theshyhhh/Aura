@@ -88,7 +88,7 @@ FGameplayTag UAuraAbilitySystemComponent::GetTagFromAbilitySpec(const FGameplayA
 {
 	if (AbilitySpec.Ability)
 	{
-		for (const FGameplayTag& Tag : AbilitySpec.Ability->AbilityTags)
+		for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
 		{
 			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
 			{
@@ -128,7 +128,7 @@ FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetAbilitySpecByTag(FGameplay
 	FScopedAbilityListLock AbilityListLock(*this);
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		for (FGameplayTag Tag : AbilitySpec.Ability->AbilityTags)
+		for (FGameplayTag Tag : AbilitySpec.Ability->GetAssetTags())
 		{
 			if (Tag.MatchesTagExact(AbilityTag))return &AbilitySpec;
 		}
