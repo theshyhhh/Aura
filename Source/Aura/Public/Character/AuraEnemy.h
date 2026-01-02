@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -27,6 +26,8 @@ public:
 
 	//begin ICombatInterface
 	FORCEINLINE virtual int32 GetCharacterLevel_Implementation() const override { return Level; }
+
+	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
 	//end ICombatInterface
 
 	//广播生命值变化
@@ -43,8 +44,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Enemy|Combat")
 	float BaseWalkSpeed = 250.f;
-
-	virtual void Die() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Combat")
 	float LifeSpan = 5.f;

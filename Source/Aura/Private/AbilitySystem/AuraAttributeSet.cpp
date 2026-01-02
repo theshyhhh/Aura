@@ -3,7 +3,6 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
-#include "Aura/AuraLogChannel.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
@@ -341,10 +340,9 @@ void UAuraAttributeSet::HandleDamage(const FEffectProperties& Props)
 		}
 		else
 		{
-			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
-			if (CombatInterface)
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
 			{
-				CombatInterface->Die();
+				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			SendXPEvent(Props);
 		}
@@ -362,7 +360,7 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	FGameplayEffectContextHandle EffectContextHandle = Props.SourceASC->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(Props.SourceAvatarActor);
 	const FGameplayTag DamageType = UAuraAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
-	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
+	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
 	const float DebuffDamage = UAuraAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
 	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
 	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
@@ -375,10 +373,10 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	DebuffGE->StackLimitCount = 1;
 	FGameplayModifierInfo ModifierInfo = FGameplayModifierInfo();
 	ModifierInfo.ModifierOp = EGameplayModOp::AddBase;
-	ModifierInfo.Attribute = UAuraAttributeSet::GetIncomingDamageAttribute();
+	ModifierInfo.Attribute = GetIncomingDamageAttribute();
 	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
 	DebuffGE->Modifiers.Add(ModifierInfo);
-	if (FGameplayEffectSpec* EffectSpec = new FGameplayEffectSpec(DebuffGE, EffectContextHandle, 1.f))
+	if (const FGameplayEffectSpec* EffectSpec = new FGameplayEffectSpec(DebuffGE, EffectContextHandle, 1.f))
 	{
 		FAuraGameplayEffectContext* AuraGameplayEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectSpec->GetContext().Get());
 		AuraGameplayEffectContext->SetDamageType(DamageType);

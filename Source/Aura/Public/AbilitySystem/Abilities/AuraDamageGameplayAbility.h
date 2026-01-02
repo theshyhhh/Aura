@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DebuffDuration;
 
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DeathImpulseMagnitude;
+
 	//对目标应用GE且使用SetByCaller传入伤害及伤害类型
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);

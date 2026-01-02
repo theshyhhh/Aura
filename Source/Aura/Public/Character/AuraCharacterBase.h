@@ -30,7 +30,7 @@ public:
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
 
 	virtual bool IsDead_Implementation() const override;
 
@@ -53,7 +53,7 @@ public:
 
 	//使客户端和服务器同时做表现层相关的死亡行为
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse = FVector::ZeroVector);
 
 protected:
 	virtual void BeginPlay() override;
