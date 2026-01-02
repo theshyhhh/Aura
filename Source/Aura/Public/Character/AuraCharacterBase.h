@@ -7,6 +7,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -44,6 +45,10 @@ public:
 	virtual void IncreaseMinionCount_Implementation(int32 Amount) override;
 
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+
+	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() override;
+
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
@@ -121,6 +126,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::Elementalist;
 
+	FOnASCRegisteredSignature OnASCRegisteredDelegate;
+
+	FOnDeathSignature OnDeathDelegate;
+
 private:
 	//初始就拥有的能力
 	UPROPERTY(EditAnywhere, Category="AuraCharacter|Abilities")
@@ -136,4 +145,7 @@ private:
 	//攻击动画和对应的Tag
 	UPROPERTY(EditDefaultsOnly, Category="AuraCharacter|Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
+	TObjectPtr<UDebuffNiagaraComponent> BurnNiagaraComponent;
 };

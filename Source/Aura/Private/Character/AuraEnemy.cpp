@@ -112,6 +112,7 @@ void AAuraEnemy::InitAbilityActorInfo()
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	//保证只在服务器上进行初始化行为，属性会同步到客户端，主要因为初始化要使用的角色职业信息在GameMode里，而GameMode只在服务器上存在
 	if (HasAuthority())InitializeDefaultAttributes();
+	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
