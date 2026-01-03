@@ -337,6 +337,16 @@ void UAuraAttributeSet::HandleDamage(const FEffectProperties& Props)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if (const FAuraGameplayEffectContext* AuraGameplayEffectContext = static_cast<const FAuraGameplayEffectContext*>(Props.EffectContextHandle
+				.Get()))
+			{
+				const FVector KnockBackForce = AuraGameplayEffectContext->GetKnockBackForce();
+				if (!KnockBackForce.IsNearlyZero())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("KnockBackForce is zero!"));
+					Props.TargetCharacter->LaunchCharacter(KnockBackForce, true, true);
+				}
+			}
 		}
 		else
 		{

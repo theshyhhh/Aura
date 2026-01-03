@@ -193,6 +193,15 @@ FVector UAuraAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextH
 	return FVector::ZeroVector;
 }
 
+FVector UAuraAbilitySystemLibrary::GetKnockBackForce(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (const FAuraGameplayEffectContext* EffectContext = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return EffectContext->GetKnockBackForce();
+	}
+	return FVector::ZeroVector;
+}
+
 void UAuraAbilitySystemLibrary::GetLivePlayerWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
                                                           const TArray<AActor*>& ActorsToIgnore, const float Radius, const FVector& SphereOrigin)
 {
@@ -231,6 +240,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	if (FAuraGameplayEffectContext* AuraGameplayEffectContext = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
 	{
 		AuraGameplayEffectContext->SetDeathImpulse(Params.DeathImpulse);
+		AuraGameplayEffectContext->SetKnockBackForce(Params.KnockBackForce);
 	}
 	FGameplayEffectSpecHandle SpecHandle = Params.SourceGameplayAbilitySystem->MakeOutgoingSpec(
 		Params.DamageGameplayEffectClass, Params.AbilityLevel, ContextHandle);

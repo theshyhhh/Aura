@@ -69,6 +69,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayEffect")
 	static FVector GetDeathImpulse(const FGameplayEffectContextHandle& ContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayEffect")
+	static FVector GetKnockBackForce(const FGameplayEffectContextHandle& ContextHandle);
+
 	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|Gameplay Mechanics")
 	static void GetLivePlayerWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors,
 	                                      const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
@@ -80,7 +83,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AuraAbilitySystemLibrary|Gameplay Mechanics")
 	static bool IsNotFriend(const AActor* FirstActor, const AActor* SecondActor);
 
-	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& Params);
 
 	static int32 GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);

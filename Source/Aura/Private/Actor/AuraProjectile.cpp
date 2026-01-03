@@ -67,6 +67,13 @@ void AAuraProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		{
 			DamageEffectParams.TargetGameplayAbilitySystem = TargetAsc;
 			DamageEffectParams.DeathImpulse = DamageEffectParams.DeathImpulseMagnitude * GetActorForwardVector();
+			//击退判定成功时设置击退的力
+			if (FMath::RandRange(0.f, 100.f) < DamageEffectParams.KnockBackChance)
+			{
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.f;
+				DamageEffectParams.KnockBackForce = DamageEffectParams.KnockBackMagnitude * Rotation.Vector();
+			}
 			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		//如果是服务器端，直接销毁

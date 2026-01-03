@@ -12,44 +12,53 @@ struct FDamageEffectParams
 
 	FDamageEffectParams() = default;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UObject> WorldContextObject = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> SourceGameplayAbilitySystem = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> TargetGameplayAbilitySystem = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.0f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag DamageType = FGameplayTag();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffChance = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffFrequency = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffDuration = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DeathImpulseMagnitude = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	float KnockBackChance = 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float KnockBackMagnitude = 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector KnockBackForce = FVector::ZeroVector;
 };
 
 USTRUCT(BlueprintType)
@@ -74,6 +83,8 @@ public:
 
 	FVector GetDeathImpulse() const { return DeathImpulse; }
 
+	FVector GetKnockBackForce() const { return KnockBackForce; }
+
 	void SetIsBlockedHit(const bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 
 	void SetIsCriticalHit(const bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
@@ -89,6 +100,8 @@ public:
 	void SetDamageType(FGameplayTag InDamageType) { DamageType = MakeShared<FGameplayTag>(InDamageType); }
 
 	void SetDeathImpulse(const FVector& InImpulse) { DeathImpulse = InImpulse; }
+
+	void SetKnockBackForce(const FVector& InForce) { KnockBackForce = InForce; }
 
 
 	//必须重载
@@ -136,6 +149,9 @@ protected:
 
 	UPROPERTY()
 	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	FVector KnockBackForce = FVector::ZeroVector;
 };
 
 template <>

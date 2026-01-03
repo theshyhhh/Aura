@@ -37,9 +37,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DeathImpulseMagnitude;
 
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float KnockBackChance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float KnockForceBackMagnitude;
+
 	//对目标应用GE且使用SetByCaller传入伤害及伤害类型
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamFromClassDefaults(AActor* TargetActor = nullptr) const;
 };
