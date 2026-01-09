@@ -28,6 +28,12 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.f; //重力
 }
 
+void AAuraProjectile::SetHomingTargetSceneComponent(USceneComponent* InHomingTargetSceneComponent)
+{
+	HomingTargetSceneComponent = InHomingTargetSceneComponent;
+	ProjectileMovementComponent->HomingTargetComponent = InHomingTargetSceneComponent;
+}
+
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -35,6 +41,7 @@ void AAuraProjectile::BeginPlay()
 
 	//播放循环音效
 	LoopingAudioComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	SetLifeSpan(5.f);
 }
 
 void AAuraProjectile::Destroyed()

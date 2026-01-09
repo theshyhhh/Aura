@@ -89,6 +89,11 @@ FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
 	return OnDeathDelegate;
 }
 
+USkeletalMeshComponent* AAuraCharacterBase::GetWeaponMesh_Implementation()
+{
+	return Weapon;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	//武器掉落在地上

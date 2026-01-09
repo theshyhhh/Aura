@@ -27,6 +27,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn=true))
 	FDamageEffectParams DamageEffectParams;
 
+	void SetHomingTargetSceneComponent(USceneComponent* InHomingTargetSceneComponent);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -54,4 +56,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingAudioComponent;
+
+	UPROPERTY()
+	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
 };

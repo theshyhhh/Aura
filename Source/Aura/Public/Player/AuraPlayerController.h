@@ -5,6 +5,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
+class UNiagaraSystem;
 class UDamageTextComponent;
 class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
@@ -26,6 +27,8 @@ public:
 	//在目标头顶上显示伤害数字，服务端调用，客户端执行
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsBlockedHit, const bool bIsCriticalHit);
+	
+	UAuraAbilitySystemComponent* GetAuraAbilitySystemComponent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -108,6 +111,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
-public:
-	UAuraAbilitySystemComponent* GetAuraAbilitySystemComponent();
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 };

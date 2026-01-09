@@ -158,4 +158,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Montage.Attack.3")));
 	GameplayTags.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Montage.Attack.4")));
+
+	//阻挡输入标签
+	GameplayTags.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.InputPressed")));
+	GameplayTags.Player_Block_InputHeld = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.InputHeld")));
+	GameplayTags.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.InputReleased")));
+	GameplayTags.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.CursorTrace")));
 }

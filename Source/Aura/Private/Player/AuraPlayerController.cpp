@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
@@ -79,6 +80,10 @@ void AAuraPlayerController::SetupInputComponent()
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if (AuraAbilitySystemComponent && AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
 	//获得控制器只计算Yaw旋转的前向向量和右向向量
 	const FVector2D InputAxisValue = InputActionValue.Get<FVector2D>();
 	const FRotator ControllerYaw = FRotator(0.f, GetControlRotation().Yaw, 0.f);
@@ -95,6 +100,10 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 void AAuraPlayerController::CursorTrace()
 {
+	if (AuraAbilitySystemComponent && AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		return;
+	}
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult);
 	if (!CursorHitResult.bBlockingHit)return;
 
@@ -131,16 +140,25 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 {
+	if (AuraAbilitySystemComponent && AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
 	//按下右键负责移动和激活能力，通过鼠标是否有指向的Actor选择攻击或移动
 	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
 		bTargeting = CurrentActor.IsValid(); //检测当前鼠标是否有指向Actor
 		bAutoRunning = false;
 	}
+	if (AuraAbilitySystemComponent)AuraAbilitySystemComponent->AbilityInputTagPressed(Tag);
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 {
+	if (AuraAbilitySystemComponent && AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))
+	{
+		return;
+	}
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
 		if (GetAuraAbilitySystemComponent())GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
@@ -166,7 +184,10 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 					CachedDestination = NavPath->PathPoints.Last(); //将目标地点设置为最后一个导航点，防止点击的目标地点无法正确到达导致的一直在自动移动
 					bAutoRunning = true;
 				}
-
+			}
+			if (AuraAbilitySystemComponent && !AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 			}
 		}
 	}
@@ -179,6 +200,10 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
  */
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag Tag)
 {
+	if (AuraAbilitySystemComponent && AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld))
+	{
+		return;
+	}
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
 		if (GetAuraAbilitySystemComponent())

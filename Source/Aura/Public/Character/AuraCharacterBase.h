@@ -49,6 +49,8 @@ public:
 	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() override;
 
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
+
+	virtual USkeletalMeshComponent* GetWeaponMesh_Implementation() override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为

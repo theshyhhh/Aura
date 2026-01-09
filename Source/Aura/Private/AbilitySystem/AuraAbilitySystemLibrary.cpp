@@ -254,6 +254,50 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	return ContextHandle;
 }
 
+/*
+ * 获得以Forward为中心，Axis为轴，在Spread角度内数量为Num平均分布的方向
+ */
+TArray<FRotator> UAuraAbilitySystemLibrary::GetEvenlyRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 Num)
+{
+	TArray<FRotator> Rotators;
+	const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2, Axis);
+	if (Num > 1)
+	{
+		float DeltaAngle = Spread / (Num - 1);
+		for (int i = 0; i < Num; i++)
+		{
+			Rotators.Add(LeftOfSpread.RotateAngleAxis(DeltaAngle * i, Axis).Rotation());
+		}
+	}
+	else
+	{
+		Rotators.Add(Forward.Rotation());
+	}
+	return Rotators;
+}
+
+/*
+ * 获得以Forward为中心，Axis为轴，在Spread角度内数量为Num平均分布的方向
+ */
+TArray<FVector> UAuraAbilitySystemLibrary::GetEvenlyVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 Num)
+{
+	TArray<FVector> Vectors;
+	const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2, Axis);
+	if (Num > 1)
+	{
+		float DeltaAngle = Spread / (Num - 1);
+		for (int i = 0; i < Num; i++)
+		{
+			Vectors.Add(LeftOfSpread.RotateAngleAxis(DeltaAngle * i, Axis));
+		}
+	}
+	else
+	{
+		Vectors.Add(Forward);
+	}
+	return Vectors;
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);

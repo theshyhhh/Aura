@@ -6,7 +6,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 	const FVector Forward = AvatarActor->GetActorForwardVector();
 	const FVector Location = AvatarActor->GetActorLocation();
 	const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpawnSpread / 2.f, FVector::UpVector);
-	const float DeltaSpread = SpawnSpread / NumMinions;
+	const float DeltaSpread = SpawnSpread / (NumMinions - 1);
 	TArray<FVector> SpawnLocations;
 	for (int i = 0; i < NumMinions; i++)
 	{

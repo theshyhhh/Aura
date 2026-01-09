@@ -341,9 +341,8 @@ void UAuraAttributeSet::HandleDamage(const FEffectProperties& Props)
 				.Get()))
 			{
 				const FVector KnockBackForce = AuraGameplayEffectContext->GetKnockBackForce();
-				if (!KnockBackForce.IsNearlyZero())
+				if (!KnockBackForce.IsNearlyZero(1.f))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("KnockBackForce is zero!"));
 					Props.TargetCharacter->LaunchCharacter(KnockBackForce, true, true);
 				}
 			}

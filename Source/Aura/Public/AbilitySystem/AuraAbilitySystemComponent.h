@@ -30,6 +30,10 @@ public:
 	//广播吃到药瓶时的GE信息
 	FEffectAssetTags EffectAssetTags;
 
+	//按下触发的函数
+
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+
 	//按下和持续按住触发的函数
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 
