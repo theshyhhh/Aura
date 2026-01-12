@@ -24,4 +24,19 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category="AuraBeamSpell")
 	TWeakObjectPtr<AActor> HitActor;
+
+	UFUNCTION(BlueprintCallable, Category="AuraBeamSpell")
+	void TraceFirstTarget(const FVector& StartLoc, const FVector& EndLoc);
+
+	UFUNCTION(BlueprintCallable, Category="AuraBeamSpell")
+	void StoreAdditionalTarget(TArray<AActor*>& OutAdditionalActors);
+
+	UPROPERTY(EditDefaultsOnly, Category="AuraBeamSpell")
+	int32 MaxShockTargetNum = 5;
+
+	UFUNCTION(BlueprintImplementableEvent, Category="AuraBeamSpell")
+	void OnPrimaryTargetDeath(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent, Category="AuraBeamSpell")
+	void OnAdditionalTargetDeath(AActor* DeadActor);
 };

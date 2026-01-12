@@ -3,6 +3,11 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 
+float UAuraDamageGameplayAbility::GetDamageByAbilityLevel() const
+{
+	return Damage.GetValueAtLevel(GetAbilityLevel());
+}
+
 void UAuraDamageGameplayAbility::CauseDamage(AActor* Target)
 {
 	FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1);

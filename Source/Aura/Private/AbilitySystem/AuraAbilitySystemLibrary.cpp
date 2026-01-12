@@ -298,6 +298,34 @@ TArray<FVector> UAuraAbilitySystemLibrary::GetEvenlyVectors(const FVector& Forwa
 	return Vectors;
 }
 
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, TArray<AActor*> Actors, TArray<AActor*>& OutClosestActors,
+                                                  const FVector& Origin)
+{
+	if (Actors.Num() <= MaxTargets)
+	{
+		OutClosestActors = Actors;
+		return;
+	}
+	int32 FoundTargetsNum = 0;
+	while (FoundTargetsNum < MaxTargets)
+	{
+		double MinDistance = TNumericLimits<double>::Max();
+		AActor* ClosestActor = nullptr;
+		for (AActor* Actor : Actors)
+		{
+			double Distance = FVector::Distance(Origin, Actor->GetActorLocation());
+			if (Distance < MinDistance)
+			{
+				MinDistance = Distance;
+				ClosestActor = Actor;
+			}
+		}
+		Actors.Remove(ClosestActor);
+		OutClosestActors.AddUnique(ClosestActor);
+		FoundTargetsNum++;
+	}
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);

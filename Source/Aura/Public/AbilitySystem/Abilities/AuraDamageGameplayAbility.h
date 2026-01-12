@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	FScalableFloat Damage;
 
+	UFUNCTION(BlueprintCallable, Category="Damage")
+	float GetDamageByAbilityLevel() const;
+
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DebuffChance;
 

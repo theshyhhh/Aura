@@ -92,5 +92,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="AuraAbilitySystemLibrary|Gameplay Mechanics")
 	static TArray<FVector> GetEvenlyVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 Num);
 
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|Gameplay Mechanics")
+	static void GetClosestTargets(int32 MaxTargets, TArray<AActor*> Actors, TArray<AActor*>& OutClosestActors, const FVector& Origin);
+
 	static int32 GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
 };
