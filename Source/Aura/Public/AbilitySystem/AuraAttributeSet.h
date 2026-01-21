@@ -247,4 +247,6 @@ private:
 	bool bFullyRestoreHealth = false;
 
 	bool bFullyRestoreMana = false;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UGameplayEffect> DebuffEffectClass;
 };

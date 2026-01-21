@@ -1,4 +1,6 @@
 ﻿#include "Character/AuraCharacter.h"
+
+#include "AuraGameplayTags.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
@@ -148,6 +150,7 @@ int32 AAuraCharacter::GetPlayerSpellPoint_Implementation() const
 	return AuraPlayerState->GetSpellPoint();
 }
 
+
 void AAuraCharacter::InitAbilityActorInfo()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
@@ -157,6 +160,8 @@ void AAuraCharacter::InitAbilityActorInfo()
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 	OnASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(
+		this, &AAuraCharacter::OnStunTagChanged);
 	//初始化UI
 	//只有当前客户端的玩家才有控制器，其它客户端的玩家在当前客户端没有控制器，所以其它人物就不会在本客户端初始化HUD
 	if (APlayerController* PlayerController = GetController<APlayerController>())

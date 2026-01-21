@@ -42,9 +42,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Enemy|Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Enemy|Combat")
-	float BaseWalkSpeed = 250.f;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Combat")
 	float LifeSpan = 5.f;
 
@@ -75,6 +72,8 @@ protected:
 
 	UPROPERTY()
 	TWeakObjectPtr<AActor> CombatTarget;
+
+	virtual void OnStunTagChanged(const FGameplayTag CallBackTag, int32 NewCount) override;
 
 private:
 	void SetRenderCustomDepth(const bool bValue) const;

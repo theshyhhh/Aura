@@ -3,8 +3,11 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -23,6 +26,24 @@ AAuraCharacterBase::AAuraCharacterBase()
 	BurnNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnNiagaraComponent"));
 	BurnNiagaraComponent->SetupAttachment(GetRootComponent());
 	BurnNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Burn;
+	
+	StunNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunNiagaraComponent"));
+	StunNiagaraComponent->SetupAttachment(GetRootComponent());
+	StunNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Stun;
+	
+	HaloOfProtectionNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("HaloOfProtectionNiagaraComponent"));
+	HaloOfProtectionNiagaraComponent->SetupAttachment(GetRootComponent());
+	HaloOfProtectionNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_HaloOfProtection;
+	
+	LifeSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("LifeSiphonNiagaraComponent"));
+	LifeSiphonNiagaraComponent->SetupAttachment(GetRootComponent());
+	LifeSiphonNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_LifeSiphon;
+	
+	ManaSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("ManaSiphonNiagaraComponent"));
+	ManaSiphonNiagaraComponent->SetupAttachment(GetRootComponent());
+	ManaSiphonNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_ManaSiphon;
+
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -94,6 +115,16 @@ USkeletalMeshComponent* AAuraCharacterBase::GetWeaponMesh_Implementation()
 	return Weapon;
 }
 
+bool AAuraCharacterBase::IsBeingElectrocute_Implementation()
+{
+	return bIsBeingElectrocuted;
+}
+
+void AAuraCharacterBase::SetIsBeingElectrocuted_Implementation(bool bInIsBeingElectrocuted)
+{
+	bIsBeingElectrocuted = bInIsBeingElectrocuted;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	//武器掉落在地上
@@ -115,6 +146,19 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	bDead = true;
 
 	OnDeathDelegate.Broadcast(this);
+}
+
+void AAuraCharacterBase::OnStunTagChanged(const FGameplayTag CallBackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+}
+
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
+	DOREPLIFETIME(AAuraCharacterBase, bIsBeingElectrocuted);
 }
 
 void AAuraCharacterBase::BeginPlay()

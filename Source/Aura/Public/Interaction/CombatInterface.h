@@ -82,6 +82,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	USkeletalMeshComponent* GetWeaponMesh();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsBeingElectrocute();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsBeingElectrocuted(bool bInIsBeingElectrocuted);
+
 	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() =0;
 	virtual FOnDeathSignature& GetOnDeathDelegate() =0;
 };

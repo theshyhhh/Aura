@@ -27,7 +27,7 @@ void UAuraWidgetController::BroadCastAbilityInfo()
 	Delegate.BindLambda([this](const FGameplayAbilitySpec& AbilitySpec)-> void
 		{
 			//通过技能的标签查找技能信息，并赋予输入标签，广播给UI
-			FAuraAbilityInfo Info = AbilityInfo->FindAbilityByTag(UAuraAbilitySystemComponent::GetTagFromAbilitySpec(AbilitySpec));
+			FAuraAbilityInfo Info = AbilityInfo->FindAbilityByTag(UAuraAbilitySystemComponent::GetAbilityTagFromAbilitySpec(AbilitySpec));
 			Info.InputTag = UAuraAbilitySystemComponent::GetInputTagFromAbilitySpec(AbilitySpec);
 			Info.StatusTag = UAuraAbilitySystemComponent::GetStatusTagFromAbilitySpec(AbilitySpec);
 			AbilityInfoDelegate.Broadcast(Info);

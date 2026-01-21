@@ -7,6 +7,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -51,11 +52,24 @@ public:
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	virtual USkeletalMeshComponent* GetWeaponMesh_Implementation() override;
+
+	virtual bool IsBeingElectrocute_Implementation() override;
+
+	virtual void SetIsBeingElectrocuted_Implementation(bool bInIsBeingElectrocuted) override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(const FVector& DeathImpulse = FVector::ZeroVector);
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsStunned = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsBeingElectrocuted = false;
+
+	//用于注册要复制的变量
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -86,7 +100,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 	//初始化主要属性GE
@@ -100,7 +114,6 @@ protected:
 	//初始化重要属性GE
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AuraCharacter|Attributes")
 	TSubclassOf<UGameplayEffect> InitVitalAttributes;
-
 
 	// Dissolve Effects
 	void Dissolve();
@@ -125,12 +138,17 @@ protected:
 	//召唤物数量
 	int32 MinionCount = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Default")
 	ECharacterClass CharacterClass = ECharacterClass::Elementalist;
 
 	FOnASCRegisteredSignature OnASCRegisteredDelegate;
 
 	FOnDeathSignature OnDeathDelegate;
+
+	virtual void OnStunTagChanged(const FGameplayTag CallBackTag, int32 NewCount);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AuraCharacter|Combat")
+	float BaseWalkSpeed = 600.f;
 
 private:
 	//初始就拥有的能力
@@ -150,4 +168,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
 	TObjectPtr<UDebuffNiagaraComponent> BurnNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
+	TObjectPtr<UDebuffNiagaraComponent> StunNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
 };
