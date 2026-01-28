@@ -118,6 +118,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Abilities.Fire.FireBolt")), FString(TEXT("火球术标签")));
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Lightning.Electrocute")), FString(TEXT("闪电术标签")));
+	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Arcane.ArcaneShards")), FString(TEXT("奥术碎片标签")));
 	GameplayTags.Abilities_Passive_HaloOfProtection = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Passive.HaloOfProtection")), FString(TEXT("被动技能护盾光环标签")));
 	GameplayTags.Abilities_Passive_LifeSiphon = UGameplayTagsManager::Get().AddNativeGameplayTag(
