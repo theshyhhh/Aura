@@ -1,10 +1,11 @@
 ﻿#include "AbilitySystem/ExecCal/ExecCal_Damage.h"
 #include "AbilitySystemComponent.h"
-#include "AuraAbilityTypes.h"
+#include "AbilitySystem/AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "Aura/Aura.h"
 #include "Interaction/CombatInterface.h"
 
 //仅用在C++中的原始结构体，不加F为了区分U结构体
@@ -75,20 +76,24 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	const UAbilitySystemComponent* SourceAsc = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetAsc = ExecutionParams.GetTargetAbilitySystemComponent();
 
-	const AActor* SourceAvatar = SourceAsc ? SourceAsc->GetAvatarActor() : nullptr;
-	const AActor* TargetAvatar = TargetAsc ? TargetAsc->GetAvatarActor() : nullptr;
+	AActor* SourceAvatar = SourceAsc ? SourceAsc->GetAvatarActor() : nullptr;
+	AActor* TargetAvatar = TargetAsc ? TargetAsc->GetAvatarActor() : nullptr;
 
 	int32 SourceLevel = 1;
 	int32 TargetLevel = 1;
+	//ICombatInterface* SourceCombatInterface = nullptr;
+	ICombatInterface* TargetCombatInterface = nullptr;
 
 	if (SourceAvatar->Implements<UCombatInterface>())
 	{
 		SourceLevel = ICombatInterface::Execute_GetCharacterLevel(SourceAvatar);
+		//SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
 	}
 
 	if (TargetAvatar->Implements<UCombatInterface>())
 	{
 		TargetLevel = ICombatInterface::Execute_GetCharacterLevel(TargetAvatar);
+		TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
 	}
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
@@ -101,7 +106,7 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 	for (const auto& Pair : AuraTags.DamageTypeToDebuff)
 	{
 		//检测对应伤害类型的伤害是否被设置
-		if (Spec.GetSetByCallerMagnitude(Pair.Key, false, -1) == -1)continue;
+		if (Spec.GetSetByCallerMagnitude(Pair.Key, false, -1.f) == -1.f)continue;
 		const float DebuffChance = Spec.GetSetByCallerMagnitude(AuraTags.Debuff_Chance, false, -1);
 		float Resistance;
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(TagToCaptureDef[AuraTags.DamageTypeToResistance[Pair.Key]], EvaluateParams,
@@ -129,6 +134,23 @@ void UExecCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutio
 			Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 			Damage += Pair.Value * (100.f - Resistance) / 100.f;
 		}
+	}
+	if (EffectContext->IsRadialDamage() && TargetCombatInterface)
+	{
+		TArray<AActor*> IgnoreActors;
+		IgnoreActors.Add(SourceAvatar);
+		Damage = UAuraAbilitySystemLibrary::ApplyRadialDamageWithFalloff(
+			TargetAvatar,
+			Damage,
+			1.f,
+			EffectContext->GetRadialDamageOrigin(),
+			EffectContext->GetRadialDamageInnerRadius(),
+			EffectContext->GetRadialDamageOuterRadius(),
+			1.f,
+			SourceAvatar,
+			nullptr,
+			ECC_DamageTrace
+		);
 	}
 	//捕获目标的格挡几率属性，判断是否成功格挡，如果成功，伤害减半
 	float BlockChance;

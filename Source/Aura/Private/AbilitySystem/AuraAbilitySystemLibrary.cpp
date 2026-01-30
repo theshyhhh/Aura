@@ -2,9 +2,10 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AuraAbilityTypes.h"
+#include "AbilitySystem/AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectTypes.h"
+#include "Engine/DamageEvents.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -241,6 +242,13 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	{
 		AuraGameplayEffectContext->SetDeathImpulse(Params.DeathImpulse);
 		AuraGameplayEffectContext->SetKnockBackForce(Params.KnockBackForce);
+		if (Params.bIsRadialDamage)
+		{
+			AuraGameplayEffectContext->SetIsRadialDamage(true);
+			AuraGameplayEffectContext->SetRadialDamageInnerRadius(Params.RadialDamageInnerRadius);
+			AuraGameplayEffectContext->SetRadialDamageOuterRadius(Params.RadialDamageOuterRadius);
+			AuraGameplayEffectContext->SetRadialDamageOrigin(Params.RadialDamageOrigin);
+		}
 	}
 	FGameplayEffectSpecHandle SpecHandle = Params.SourceGameplayAbilitySystem->MakeOutgoingSpec(
 		Params.DamageGameplayEffectClass, Params.AbilityLevel, ContextHandle);
@@ -324,6 +332,116 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, TArray<AActo
 		OutClosestActors.AddUnique(ClosestActor);
 		FoundTargetsNum++;
 	}
+}
+
+/** @RETURN True if weapon trace from Origin hits component VictimComp.  OutHitResult will contain properties of the hit. */
+static bool ComponentIsDamageableFrom(UPrimitiveComponent* VictimComp, FVector const& Origin, AActor const* IgnoredActor,
+                                      const TArray<AActor*>& IgnoreActors, ECollisionChannel TraceChannel, FHitResult& OutHitResult)
+{
+	FCollisionQueryParams LineParams(SCENE_QUERY_STAT(ComponentIsVisibleFrom), true, IgnoredActor);
+	LineParams.AddIgnoredActors(IgnoreActors);
+
+	// Do a trace from origin to middle of box
+	UWorld* const World = VictimComp->GetWorld();
+	check(World);
+
+	FVector const TraceEnd = VictimComp->Bounds.Origin;
+	FVector TraceStart = Origin;
+	if (Origin == TraceEnd)
+	{
+		// tiny nudge so LineTraceSingle doesn't early out with no hits
+		TraceStart.Z += 0.01f;
+	}
+
+	// Only do a line trace if there is a valid channel, if it is invalid then result will have no fall off
+	if (TraceChannel != ECollisionChannel::ECC_MAX)
+	{
+		bool const bHadBlockingHit = World->LineTraceSingleByChannel(OutHitResult, TraceStart, TraceEnd, TraceChannel, LineParams);
+		//::DrawDebugLine(World, TraceStart, TraceEnd, FLinearColor::Red, true);
+
+		// If there was a blocking hit, it will be the last one
+		if (bHadBlockingHit)
+		{
+			if (OutHitResult.Component == VictimComp)
+			{
+				// if blocking hit was the victim component, it is visible
+				return true;
+			}
+			else
+			{
+				// if we hit something else blocking, it's not
+				UE_LOG(LogDamage, Log, TEXT("Radial Damage to %s blocked by %s (%s)"), *GetNameSafe(VictimComp),
+				       *OutHitResult.GetHitObjectHandle().GetName(), *GetNameSafe(OutHitResult.Component.Get()));
+				return false;
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogDamage, Warning, TEXT("ECollisionChannel::ECC_MAX is not valid! No falloff is added to damage"));
+	}
+
+	// didn't hit anything, assume nothing blocking the damage and victim is consequently visible
+	// but since we don't have a hit result to pass back, construct a simple one, modeling the damage as having hit a point at the component's center.
+	FVector const FakeHitLoc = VictimComp->GetComponentLocation();
+	FVector const FakeHitNorm = (Origin - FakeHitLoc).GetSafeNormal(); // normal points back toward the epicenter
+	OutHitResult = FHitResult(VictimComp->GetOwner(), VictimComp, FakeHitLoc, FakeHitNorm);
+	return true;
+}
+
+float UAuraAbilitySystemLibrary::ApplyRadialDamageWithFalloff(AActor* TargetActor, float BaseDamage, float MinimumDamage, const FVector& Origin,
+                                                              float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff,
+                                                              AActor* DamageCauser, AController* InstigatedByController,
+                                                              ECollisionChannel DamagePreventionChannel)
+{
+	// 判断目标角色是否死亡
+	bool bIsDead = true;
+	if (TargetActor->Implements<UCombatInterface>())
+	{
+		bIsDead = ICombatInterface::Execute_IsDead(TargetActor);
+	}
+	if (bIsDead)
+	{
+		return 0.f; //如果角色已经死亡，直接返回0
+	}
+
+	// 获取目标角色所有组件
+	TArray<UActorComponent*> Components;
+	TargetActor->GetComponents(Components);
+
+	bool bIsDamageable = false; //判断攻击是能能够查看到目标
+	TArray<FHitResult> HitList; //存储目标收到碰撞查询到的碰撞结果
+	for (UActorComponent* Comp : Components)
+	{
+		UPrimitiveComponent* PrimitiveComp = Cast<UPrimitiveComponent>(Comp);
+		if (PrimitiveComp && PrimitiveComp->IsCollisionEnabled())
+		{
+			FHitResult Hit;
+			bIsDamageable = ComponentIsDamageableFrom(
+				PrimitiveComp, Origin, DamageCauser, {DamageCauser}, DamagePreventionChannel, Hit
+			);
+			HitList.Add(Hit);
+			if (bIsDamageable) break;
+		}
+	}
+
+	//应用目标的伤害值
+	float AppliedDamage = 0.f;
+
+	if (bIsDamageable)
+	{
+		// 创建伤害事件
+		FRadialDamageEvent DmgEvent;
+		DmgEvent.DamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
+		DmgEvent.Origin = Origin;
+		DmgEvent.Params = FRadialDamageParams(BaseDamage, MinimumDamage, DamageInnerRadius, DamageOuterRadius, DamageFalloff);
+		DmgEvent.ComponentHits = HitList;
+
+		// 应用伤害
+		AppliedDamage = TargetActor->TakeDamage(BaseDamage, DmgEvent, InstigatedByController, DamageCauser);
+	}
+
+	return AppliedDamage;
 }
 
 int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)

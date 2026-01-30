@@ -26,22 +26,22 @@ AAuraCharacterBase::AAuraCharacterBase()
 	BurnNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnNiagaraComponent"));
 	BurnNiagaraComponent->SetupAttachment(GetRootComponent());
 	BurnNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Burn;
-	
+
 	StunNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunNiagaraComponent"));
 	StunNiagaraComponent->SetupAttachment(GetRootComponent());
 	StunNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Stun;
-	
-	HaloOfProtectionNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("HaloOfProtectionNiagaraComponent"));
+
+	HaloOfProtectionNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("HaloOfProtectionNiagaraComponent"));
 	HaloOfProtectionNiagaraComponent->SetupAttachment(GetRootComponent());
-	HaloOfProtectionNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_HaloOfProtection;
-	
-	LifeSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("LifeSiphonNiagaraComponent"));
+	HaloOfProtectionNiagaraComponent->PassiveAbilityTag = FAuraGameplayTags::Get().Abilities_Passive_HaloOfProtection;
+
+	LifeSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("LifeSiphonNiagaraComponent"));
 	LifeSiphonNiagaraComponent->SetupAttachment(GetRootComponent());
-	LifeSiphonNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_LifeSiphon;
-	
-	ManaSiphonNiagaraComponent=CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("ManaSiphonNiagaraComponent"));
+	LifeSiphonNiagaraComponent->PassiveAbilityTag = FAuraGameplayTags::Get().Abilities_Passive_LifeSiphon;
+
+	ManaSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>(TEXT("ManaSiphonNiagaraComponent"));
 	ManaSiphonNiagaraComponent->SetupAttachment(GetRootComponent());
-	ManaSiphonNiagaraComponent->PassiveAbilityTag=FAuraGameplayTags::Get().Abilities_Passive_ManaSiphon;
+	ManaSiphonNiagaraComponent->PassiveAbilityTag = FAuraGameplayTags::Get().Abilities_Passive_ManaSiphon;
 
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 }
@@ -123,6 +123,11 @@ bool AAuraCharacterBase::IsBeingElectrocute_Implementation()
 void AAuraCharacterBase::SetIsBeingElectrocuted_Implementation(bool bInIsBeingElectrocuted)
 {
 	bIsBeingElectrocuted = bInIsBeingElectrocuted;
+}
+
+FOnReceiveDamageSignature& AAuraCharacterBase::GetOnReceiveDamageDelegate()
+{
+	return OnReceiveDamageDelegate;
 }
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)

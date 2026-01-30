@@ -8,6 +8,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Actor/MagicCircle.h"
+#include "Aura/Aura.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
@@ -107,7 +108,7 @@ void AAuraPlayerController::CursorTrace()
 	{
 		return;
 	}
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResult);
+	GetHitResultUnderCursor(IsValid(MagicCircle) ? ECC_ExcludePawn : ECC_Visibility, false, CursorHitResult);
 	if (!CursorHitResult.bBlockingHit)return;
 
 	LastActor = CurrentActor;

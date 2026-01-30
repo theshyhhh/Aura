@@ -26,6 +26,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
 	//CombatInterface Begin
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& Tag) const override;
 
@@ -56,6 +57,8 @@ public:
 	virtual bool IsBeingElectrocute_Implementation() override;
 
 	virtual void SetIsBeingElectrocuted_Implementation(bool bInIsBeingElectrocuted) override;
+
+	virtual FOnReceiveDamageSignature& GetOnReceiveDamageDelegate() override;
 	//CombatInterface End
 
 	//使客户端和服务器同时做表现层相关的死亡行为
@@ -180,4 +183,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="AuraCharacter|Combat")
 	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+
+	FOnReceiveDamageSignature OnReceiveDamageDelegate;
 };

@@ -12,6 +12,8 @@ class UNiagaraSystem;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegisteredSignature, UAbilitySystemComponent*);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeathActor);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnReceiveDamageSignature, float/*Damage*/)
+
 USTRUCT(BlueprintType)
 struct FTaggedMontage
 {
@@ -89,5 +91,8 @@ public:
 	void SetIsBeingElectrocuted(bool bInIsBeingElectrocuted);
 
 	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() =0;
+
 	virtual FOnDeathSignature& GetOnDeathDelegate() =0;
+
+	virtual FOnReceiveDamageSignature& GetOnReceiveDamageDelegate() =0;
 };

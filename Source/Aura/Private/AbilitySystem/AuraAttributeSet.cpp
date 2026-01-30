@@ -335,7 +335,7 @@ void UAuraAttributeSet::HandleDamage(const FEffectProperties& Props)
 		//检测是否死亡，如果没死播放执行受击逻辑，如果死了，执行死亡逻辑
 		if (NewHealth > 0.f)
 		{
-			if (Props.TargetCharacter->Implements<UCombatInterface>()&&!ICombatInterface::Execute_IsBeingElectrocute(Props.TargetCharacter))
+			if (Props.TargetCharacter->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsBeingElectrocute(Props.TargetCharacter))
 			{
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
@@ -345,7 +345,7 @@ void UAuraAttributeSet::HandleDamage(const FEffectProperties& Props)
 				.Get()))
 			{
 				const FVector KnockBackForce = AuraGameplayEffectContext->GetKnockBackForce();
-				if (!KnockBackForce.IsNearlyZero(1.f))
+				if (!KnockBackForce.IsNearlyZero())
 				{
 					Props.TargetCharacter->LaunchCharacter(KnockBackForce, true, true);
 				}
