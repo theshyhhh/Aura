@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="AuraBeamSpell")
 	int32 MaxShockTargetNum = 5;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AuraBeamSpell")
+	float DamageDeltaTime = 0.1f;
+
 	UFUNCTION(BlueprintImplementableEvent, Category="AuraBeamSpell")
 	void OnPrimaryTargetDeath(AActor* DeadActor);
 
