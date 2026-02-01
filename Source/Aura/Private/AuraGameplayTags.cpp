@@ -116,6 +116,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName(TEXT("Abilities.Summon")), FString(TEXT("召唤能力标签")));
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Fire.FireBolt")), FString(TEXT("火球术标签")));
+	GameplayTags.Abilities_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName(TEXT("Abilities.Fire.FireBlast")), FString(TEXT("火焰爆发标签")));
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName(TEXT("Abilities.Lightning.Electrocute")), FString(TEXT("闪电术标签")));
 	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -172,4 +174,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Player_Block_InputHeld = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.InputHeld")));
 	GameplayTags.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.InputReleased")));
 	GameplayTags.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("Player.Block.CursorTrace")));
+
+	//GameplayCue
+	GameplayTags.GameplayCue_FireBlast == UGameplayTagsManager::Get().AddNativeGameplayTag(FName(TEXT("GameplayCue.FireBlast")));
 }

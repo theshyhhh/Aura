@@ -115,6 +115,26 @@ public:
 	                                          float DamageFalloff, AActor* DamageCauser = nullptr, AController* InstigatedByController = nullptr,
 	                                          ECollisionChannel DamagePreventionChannel = ECC_Visibility);
 
+	/**此函数为方便蓝图设置FDamageEffectParams径向伤害相关变量
+	 * @param DamageParams 传入的伤害变量
+	 * @param bIsRadial 是否为径向伤害
+	 * @param RadialDamageInnerRadius 全伤害半径
+	 * @param RadialDamageOuterRadius 小伤害半径
+	 * @param Origin 爆炸的原点
+	 */
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|DamageEffect")
+	static void SetDamageEffectParamsRadialDamage(UPARAM(ref) FDamageEffectParams& DamageParams, bool bIsRadial, float RadialDamageInnerRadius = 0.f,
+	                                              float RadialDamageOuterRadius = 0.f, const FVector& Origin = FVector::ZeroVector);
+
+	/**此函数为方便蓝图设置FDamageEffectParams击退的向量
+	* @param DamageParams 传入的伤害变量
+	* @param KnockBackDirection 击退的方向
+	* @param KnockBackForceMagnitude 击退的力度
+	* @param DeathImpulseMagnitude 目标死亡时击飞的力度
+	*/
+	UFUNCTION(BlueprintCallable, Category="AuraAbilitySystemLibrary|DamageEffect")
+	static void SetDamageEffectParamsKnockBackForce(UPARAM(ref) FDamageEffectParams& DamageParams, const FVector& KnockBackDirection,
+	                                                float KnockBackForceMagnitude = 0.f, float DeathImpulseMagnitude = 0.f);
 
 	static int32 GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
 };

@@ -10,7 +10,7 @@ FString UAuraArcaneShards::GetDescription(int32 Level)
 	const float Cooldown = GetCoolDown(Level);
 	return FString::Printf(TEXT(
 		// Title
-		"<Title>当前等级</>\n\n"
+		"<Title>法术碎片</>\n\n"
 
 		// Level
 		"<Small>技能等级: </><Level>%d</>\n"
@@ -24,12 +24,12 @@ FString UAuraArcaneShards::GetDescription(int32 Level)
 		// Damage
 		"<Damage>%d</><Default>法术伤害，伤害随着到碎片中心的距离的增加变低</>\n"),
 
-						   // Values
-						   Level,
-						   ManaCost,
-						   Cooldown,
-						   FMath::Min(Level, MaxShardsNum),
-						   DamageAtLevel);
+	                       // Values
+	                       Level,
+	                       ManaCost,
+	                       Cooldown,
+	                       FMath::Min(Level, MaxShardsNum),
+	                       DamageAtLevel);
 }
 
 FString UAuraArcaneShards::GetNextLevelDescription(int32 Level)
@@ -53,10 +53,10 @@ FString UAuraArcaneShards::GetNextLevelDescription(int32 Level)
 		// Damage
 		"<Damage>%d</><Default>法术伤害，伤害随着到碎片中心的距离的增加变低</>\n"),
 
-						   // Values
-						   Level,
-						   ManaCost,
-						   Cooldown,
-						   FMath::Min(Level, MaxShardsNum),
-						   DamageAtLevel);
+	                       // Values
+	                       Level,
+	                       ManaCost,
+	                       Cooldown,
+	                       FMath::Min(Level, MaxShardsNum),
+	                       DamageAtLevel);
 }

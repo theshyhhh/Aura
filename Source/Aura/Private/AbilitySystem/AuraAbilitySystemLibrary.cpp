@@ -444,6 +444,38 @@ float UAuraAbilitySystemLibrary::ApplyRadialDamageWithFalloff(AActor* TargetActo
 	return AppliedDamage;
 }
 
+void UAuraAbilitySystemLibrary::SetDamageEffectParamsRadialDamage(FDamageEffectParams& DamageParams, bool bIsRadial, float RadialDamageInnerRadius,
+                                                                  float RadialDamageOuterRadius, const FVector& Origin)
+{
+	DamageParams.bIsRadialDamage = bIsRadial;
+	DamageParams.RadialDamageInnerRadius = RadialDamageInnerRadius;
+	DamageParams.RadialDamageOuterRadius = RadialDamageOuterRadius;
+	DamageParams.RadialDamageOrigin = Origin;
+}
+
+void UAuraAbilitySystemLibrary::SetDamageEffectParamsKnockBackForce(FDamageEffectParams& DamageParams,
+                                                                    const FVector& KnockBackDirection, float KnockBackForceMagnitude,
+                                                                    float DeathImpulseMagnitude)
+{
+	if (KnockBackForceMagnitude != 0.f)
+	{
+		DamageParams.KnockBackForce = KnockBackDirection.GetSafeNormal() * KnockBackForceMagnitude;
+	}
+	else
+	{
+		DamageParams.KnockBackForce = KnockBackDirection.GetSafeNormal() * DamageParams.KnockBackMagnitude;
+	}
+
+	if (DeathImpulseMagnitude != 0.f)
+	{
+		DamageParams.DeathImpulse = KnockBackDirection.GetSafeNormal() * DeathImpulseMagnitude;
+	}
+	else
+	{
+		DamageParams.DeathImpulse = KnockBackDirection.GetSafeNormal() * DamageParams.DeathImpulseMagnitude;
+	}
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPRewardByClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);

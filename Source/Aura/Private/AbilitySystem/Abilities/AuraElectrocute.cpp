@@ -10,7 +10,7 @@ FString UAuraElectrocute::GetDescription(int32 Level)
 	const float Cooldown = GetCoolDown(Level);
 	return FString::Printf(TEXT(
 		// Title
-		"<Title>当前等级</>\n\n"
+		"<Title>闪电链</>\n\n"
 
 		// Level
 		"<Small>技能等级: </><Level>%d</>\n"

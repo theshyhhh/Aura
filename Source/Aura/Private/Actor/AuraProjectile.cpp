@@ -50,10 +50,7 @@ void AAuraProjectile::Destroyed()
 	//如果播放过了，就直接销毁
 	if (!bHit && !HasAuthority())
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		if (LoopingAudioComponent)LoopingAudioComponent->Stop();
-		bHit = true;
+		OnHit();
 	}
 	Super::Destroyed();
 }
@@ -63,10 +60,7 @@ void AAuraProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	//保证角色不会攻击到自己，且客户端还没有触发碰撞，保证生成音效特效只执行一次
 	if (GetOwner() == OtherActor || bHit || !UAuraAbilitySystemLibrary::IsNotFriend(GetOwner(), OtherActor))return;
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	if (LoopingAudioComponent)LoopingAudioComponent->Stop();
-
+	OnHit();
 	if (HasAuthority())
 	{
 		//GE的应用仅在服务器端执行，客户端属性会同步过去
@@ -86,9 +80,16 @@ void AAuraProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompon
 		//如果是服务器端，直接销毁
 		Destroy();
 	}
-	else
+}
+
+void AAuraProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (LoopingAudioComponent)
 	{
-		//如果是客户端，标记为已碰撞
-		bHit = true;
+		LoopingAudioComponent->Stop();
+		LoopingAudioComponent->DestroyComponent();
 	}
+	bHit = true;
 }
