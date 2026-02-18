@@ -38,6 +38,13 @@ public:
 
 	const FString& GetMapName() const { return MapName; }
 
+	void SetPlayerLevel(int32 InPlayerLevel);
+
+	const int32& GetPlayerLevel() const { return PlayerLevel; }
+
+	UPROPERTY()
+	FName PlayerStartTag;
+
 	UPROPERTY()
 	int32 SlotIndex;
 
@@ -53,4 +60,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
 	FString MapName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
+	int32 PlayerLevel;
 };

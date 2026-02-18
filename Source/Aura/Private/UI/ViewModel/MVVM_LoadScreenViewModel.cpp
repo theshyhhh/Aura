@@ -1,5 +1,6 @@
 ﻿#include "UI/ViewModel/MVVM_LoadScreenViewModel.h"
 
+#include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/MVVM_LoadSlotViewModel.h"
@@ -36,8 +37,15 @@ void UMVVM_LoadScreenViewModel::NewSlotButtonClicked(int32 SlotIndex, const FStr
 	IndexToLoadSlotViewModel[SlotIndex]->SaveSlotStatus = ESaveSlotStatus::Taken;
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	IndexToLoadSlotViewModel[SlotIndex]->SetMapName(AuraGameMode->GetDefaultMapName());
+	IndexToLoadSlotViewModel[SlotIndex]->PlayerStartTag = AuraGameMode->GetDefaultPlayerStartTag();
+	IndexToLoadSlotViewModel[SlotIndex]->SetPlayerLevel(1);
 	AuraGameMode->SaveSlotData(IndexToLoadSlotViewModel[SlotIndex], SlotIndex);
 	IndexToLoadSlotViewModel[SlotIndex]->UpdateSlot();
+
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
+	AuraGameInstance->LoadSlotName = IndexToLoadSlotViewModel[SlotIndex]->GetLoadSlotName();
+	AuraGameInstance->LoadSlotIndex = SlotIndex;
+	AuraGameInstance->PlayerStartTag = AuraGameMode->GetDefaultPlayerStartTag();
 }
 
 void UMVVM_LoadScreenViewModel::NewGameButtonClicked(int32 SlotIndex)
@@ -59,6 +67,10 @@ void UMVVM_LoadScreenViewModel::PlayButtonClicked()
 {
 	if (SelectedSlotIndex < 0 || SelectedSlotIndex > 2)return;
 	AAuraGameModeBase* AuraGameModeBase = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameModeBase->GetGameInstance());
+	AuraGameInstance->PlayerStartTag = IndexToLoadSlotViewModel[SelectedSlotIndex]->PlayerStartTag;
+	AuraGameInstance->LoadSlotName = IndexToLoadSlotViewModel[SelectedSlotIndex]->GetLoadSlotName();
+	AuraGameInstance->LoadSlotIndex = SelectedSlotIndex;
 	AuraGameModeBase->TravelToMap(IndexToLoadSlotViewModel[SelectedSlotIndex]);
 }
 
@@ -71,6 +83,8 @@ void UMVVM_LoadScreenViewModel::LoadData()
 		Pair.Value->SaveSlotStatus = LoadScreenSaveGame->SaveSlotStatus;
 		Pair.Value->SetPlayerName(LoadScreenSaveGame->PlayerName);
 		Pair.Value->SetMapName(LoadScreenSaveGame->MapName);
+		Pair.Value->PlayerStartTag = LoadScreenSaveGame->PlayerStartTag;
+		Pair.Value->SetPlayerLevel(LoadScreenSaveGame->Level);
 		Pair.Value->UpdateSlot();
 	}
 }

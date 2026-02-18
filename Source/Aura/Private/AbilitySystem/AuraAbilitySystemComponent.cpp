@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannel.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "Interaction/PlayerInterface.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
@@ -35,8 +36,31 @@ void UAuraAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSub
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupPassiveAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
 		GiveAbilityAndActivateOnce(AbilitySpec);
 	}
+}
+
+void UAuraAbilitySystemComponent::AddCharacterAbilitiesFromSaveData(ULoadScreenSaveGame* SaveData)
+{
+	for (const FAbilitySaveInfo& AbilitySaveData : SaveData->SavedAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilitySaveData.AbilityClass, AbilitySaveData.AbilityLevel);
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilitySaveData.AbilityInputTag);
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilitySaveData.AbilityStatus);
+		if (AbilitySaveData.AbilityType == FAuraGameplayTags::Get().Abilities_Type_Offensive)
+		{
+			GiveAbility(AbilitySpec);
+		}
+		else if (AbilitySaveData.AbilityType == FAuraGameplayTags::Get().Abilities_Type_Passive)
+		{
+			AbilitySaveData.AbilityStatus == FAuraGameplayTags::Get().Abilities_Status_Equipped
+				? GiveAbilityAndActivateOnce(AbilitySpec)
+				: GiveAbility(AbilitySpec);
+		}
+	}
+	bStartupAbilityHasBeenGiven = true;
+	OnAbilityGrantedDelegate.Broadcast();
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -306,6 +330,8 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			{
 				if (IsPassiveAbility(*Spec))
 				{
+					Spec->GetDynamicSpecSourceTags().RemoveTag(GetStatusTagFromAbilitySpec(*Spec));
+					Spec->GetDynamicSpecSourceTags().AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
 					//如果该被动技能未被装备，则激活这个技能
 					TryActivateAbility(Spec->Handle);
 					MutiCastActivatePassiveEffect(GetAbilityTagFromAbilitySpec(*Spec), true);

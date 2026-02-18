@@ -15,6 +15,13 @@ class UInputMappingContext;
 class UInputAction;
 class USplineComponent;
 
+enum class ETargetingStatus: uint8
+{
+	TargetingEnemy,
+	TargetingNonEnemy,
+	TargetingNone
+};
+
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
 {
@@ -81,7 +88,7 @@ private:
 	 */
 
 	/*是否鼠标正指向敌人*/
-	bool bTargeting = false;
+	ETargetingStatus TargetingStatus = ETargetingStatus::TargetingNone;
 
 	/*鼠标按下时检测到的位置*/
 	FVector CachedDestination = FVector::ZeroVector;

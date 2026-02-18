@@ -31,12 +31,12 @@ AAuraEnemy::AAuraEnemy()
 	BaseWalkSpeed = 250.f;
 }
 
-void AAuraEnemy::HighlightActor()
+void AAuraEnemy::HighlightActor_Implementation()
 {
 	SetRenderCustomDepth(true);
 }
 
-void AAuraEnemy::UnHighlightActor()
+void AAuraEnemy::UnHighlightActor_Implementation()
 {
 	SetRenderCustomDepth(false);
 }

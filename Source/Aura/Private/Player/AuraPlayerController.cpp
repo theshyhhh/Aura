@@ -14,6 +14,7 @@
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/Widget/DamageTextComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
@@ -113,7 +114,7 @@ void AAuraPlayerController::CursorTrace()
 
 	LastActor = CurrentActor;
 	AActor* HitActor = CursorHitResult.GetActor();
-	if (HitActor && HitActor->Implements<UEnemyInterface>())
+	if (HitActor && HitActor->Implements<UHighlightInterface>())
 	{
 		CurrentActor = HitActor;
 	}
@@ -131,13 +132,11 @@ void AAuraPlayerController::CursorTrace()
 	{
 		if (LastActor.IsValid())
 		{
-			IEnemyInterface* LastPtr = Cast<IEnemyInterface>(LastActor.Get());
-			LastPtr->UnHighlightActor();
+			IHighlightInterface::Execute_UnHighlightActor(LastActor.Get());
 		}
 		if (CurrentActor.IsValid())
 		{
-			IEnemyInterface* CurrentPtr = Cast<IEnemyInterface>(CurrentActor.Get());
-			CurrentPtr->HighlightActor();
+			IHighlightInterface::Execute_HighlightActor(CurrentActor.Get());
 		}
 	}
 }
@@ -151,7 +150,15 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 	//按下右键负责移动和激活能力，通过鼠标是否有指向的Actor选择攻击或移动
 	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
-		bTargeting = CurrentActor.IsValid(); //检测当前鼠标是否有指向Actor
+		//检测当前鼠标是否有指向敌人
+		if (CurrentActor.IsValid())
+		{
+			TargetingStatus = CurrentActor->Implements<UEnemyInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+		}
+		else
+		{
+			TargetingStatus = ETargetingStatus::TargetingNone;
+		}
 		bAutoRunning = false;
 	}
 	if (AuraAbilitySystemComponent)AuraAbilitySystemComponent->AbilityInputTagPressed(Tag);
@@ -170,7 +177,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 	}
 	if (GetAuraAbilitySystemComponent())GetAuraAbilitySystemComponent()->AbilityInputTagReleased(Tag);
 	//既没有瞄准的目标也没有按下shift时，如果右键按下时间小于最短按下时间，则进行自动寻路
-	if (!bTargeting && !bShiftPressed)
+	if (TargetingStatus != ETargetingStatus::TargetingEnemy && !bShiftPressed)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -216,7 +223,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag Tag)
 		}
 		return;
 	}
-	if (bTargeting || bShiftPressed)
+	if (TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftPressed)
 	{
 		if (GetAuraAbilitySystemComponent())
 		{

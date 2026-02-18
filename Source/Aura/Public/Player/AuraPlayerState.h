@@ -10,7 +10,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32); //用于广播玩家数据变化的委托
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChangedSignature, int32/*NewLevel*/, bool/*是否播放升级特效*/);
 UCLASS()
 class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -45,9 +45,13 @@ public:
 
 	void SetLevel(const int32 NewLevel);
 
+	void SetAttributePoint(const int32 InAttributePoint);
+
+	void SetSpellPoint(const int32 InSpellPoint);
+
 	FOnPlayerStatChangedSignature OnXPChangedDelegate;
 
-	FOnPlayerStatChangedSignature OnLevelChangedDelegate;
+	FOnLevelChangedSignature OnLevelChangedDelegate;
 
 	FOnPlayerStatChangedSignature OnAttributePointChangedDelegate;
 

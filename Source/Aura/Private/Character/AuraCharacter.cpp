@@ -1,12 +1,19 @@
 ﻿#include "Character/AuraCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
@@ -62,7 +69,8 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	//服务端初始化
 	InitAbilityActorInfo();
-	AddCharacterAbilities();
+	//初始化玩家角色属性信息
+	LoadProgress();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -167,6 +175,47 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 	}
 }
 
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	if (!HasAuthority())return;
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	check(AuraGameMode);
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
+	check(AuraGameInstance);
+	AuraGameInstance->PlayerStartTag = CheckpointTag;
+	ULoadScreenSaveGame* SaveGame = AuraGameMode->GetSaveSlotData(AuraGameInstance->LoadSlotName, AuraGameInstance->LoadSlotIndex);
+	SaveGame->PlayerStartTag = CheckpointTag;
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+	check(AuraPlayerState);
+	SaveGame->Level = AuraPlayerState->GetPlayerLevel();
+	SaveGame->XP = AuraPlayerState->GetPlayerXP();
+	SaveGame->AttributePoint = AuraPlayerState->GetAttributePoint();
+	SaveGame->SpellPoint = AuraPlayerState->GetSpellPoint();
+	SaveGame->bFirstTimeLoadIn = false;
+	SaveGame->Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+	SaveGame->Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+	SaveGame->Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
+	SaveGame->Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
+	FForEachAbility SaveAbilityDelegate;
+	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	SaveGame->SavedAbilities.Empty();
+	SaveAbilityDelegate.BindLambda([AuraASC,SaveGame,AuraGameMode](const FGameplayAbilitySpec& Spec)-> void
+	{
+		FAbilitySaveInfo AbilitySaveInfo;
+		AbilitySaveInfo.AbilityClass = Spec.Ability->GetClass();
+		AbilitySaveInfo.AbilityTag = UAuraAbilitySystemComponent::GetAbilityTagFromAbilitySpec(Spec);
+		FAuraAbilityInfo AbilityInfo = AuraGameMode->AbilityInfo->FindAbilityByTag(AbilitySaveInfo.AbilityTag);
+		AbilitySaveInfo.AbilityType = AbilityInfo.AbilityType;
+		AbilitySaveInfo.AbilityLevel = Spec.Level;
+		AbilitySaveInfo.AbilityInputTag = AuraASC->GetInputTagByAbilityTag(AbilitySaveInfo.AbilityTag);
+		AbilitySaveInfo.AbilityStatus = AuraASC->GetStatusTagByAbilityTag(AbilitySaveInfo.AbilityTag);
+
+		SaveGame->SavedAbilities.AddUnique(AbilitySaveInfo);
+	});
+	AuraASC->ForEachAbility(SaveAbilityDelegate);
+	UGameplayStatics::SaveGameToSlot(SaveGame, AuraGameInstance->LoadSlotName, AuraGameInstance->LoadSlotIndex);
+}
+
 
 void AAuraCharacter::InitAbilityActorInfo()
 {
@@ -188,8 +237,54 @@ void AAuraCharacter::InitAbilityActorInfo()
 			AuraHUD->InitOverlayWidget(PlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
-	//初始化属性
-	InitializeDefaultAttributes();
+}
+
+void AAuraCharacter::LoadProgress()
+{
+	if (!HasAuthority())return;
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	check(AuraGameMode);
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
+	check(AuraGameInstance);
+	ULoadScreenSaveGame* SaveGame = AuraGameMode->GetSaveSlotData(AuraGameInstance->LoadSlotName, AuraGameInstance->LoadSlotIndex);
+	check(SaveGame);
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+	check(AuraPlayerState);
+	AuraPlayerState->SetLevel(SaveGame->Level);
+	AuraPlayerState->SetXP(SaveGame->XP);
+	AuraPlayerState->SetAttributePoint(SaveGame->AttributePoint);
+	AuraPlayerState->SetSpellPoint(SaveGame->SpellPoint);
+	if (SaveGame->bFirstTimeLoadIn)
+	{
+		InitializeDefaultAttributes();
+		AddCharacterAbilities();
+	}
+	else
+	{
+		InitPrimaryAttributeFromSaveGame(SaveGame);
+		ApplyEffectToSelf(DefaultSecondaryAttributes, Execute_GetCharacterLevel(this));
+		ApplyEffectToSelf(InitVitalAttributes, Execute_GetCharacterLevel(this));
+		if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+		{
+			AuraASC->AddCharacterAbilitiesFromSaveData(SaveGame);
+		}
+	}
+	AuraGameMode->LoadWorldState(GetWorld());
+}
+
+void AAuraCharacter::InitPrimaryAttributeFromSaveGame(const ULoadScreenSaveGame* SaveGame)
+{
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(PrimaryAttributeEffect_SetByCaller, 1.f, ContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Attributes_Primary_Strength,
+	                                                              SaveGame->Strength);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Attributes_Primary_Intelligence,
+	                                                              SaveGame->Intelligence);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Attributes_Primary_Resilience,
+	                                                              SaveGame->Resilience);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FAuraGameplayTags::Get().Attributes_Primary_Vigor, SaveGame->Vigor);
+	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 }
 
 void AAuraCharacter::MulticastLevelUpParticle_Implementation() const

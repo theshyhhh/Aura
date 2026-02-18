@@ -18,9 +18,9 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	GetAuraPlayerState()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
-	GetAuraPlayerState()->OnLevelChangedDelegate.AddLambda([this](int32 NewLevel)-> void
+	GetAuraPlayerState()->OnLevelChangedDelegate.AddLambda([this](int32 NewLevel, bool bPlayLevelUpEffect)-> void
 	{
-		OnLevelChangedDelegate.Broadcast(NewLevel);
+		OnLevelChangedDelegate.Broadcast(NewLevel, bPlayLevelUpEffect);
 	});
 	//绑定当对应属性值变化使，想要调用的回调函数
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetAuraAttributeSet()->GetHealthAttribute()).AddLambda(

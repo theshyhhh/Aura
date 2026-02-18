@@ -18,13 +18,21 @@ class AURA_API AAuraGameModeBase : public AGameModeBase
 public:
 	void SaveSlotData(const UMVVM_LoadSlotViewModel* LoadSlotViewModel, int32 SlotIndex) const;
 
+	void SaveWorldState(UWorld* World) const;
+
+	void LoadWorldState(UWorld* World) const;
+
 	static void DeleteSlotData(const FString& SlotName, int32 SlotIndex);
 
 	ULoadScreenSaveGame* GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
 
 	FORCEINLINE FString GetDefaultMapName() const { return DefaultMapName; }
-	
+
+	FORCEINLINE FName GetDefaultPlayerStartTag() const { return DefaultPlayerStartTag; }
+
 	void TravelToMap(UMVVM_LoadSlotViewModel* LoadSlotVM);
+
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 private:
 	//地图名与地图的映射
@@ -34,6 +42,10 @@ private:
 	//默认地图名称
 	UPROPERTY(EditDefaultsOnly)
 	FString DefaultMapName;
+
+	//默认出生地点Tag
+	UPROPERTY(EditDefaultsOnly)
+	FName DefaultPlayerStartTag;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSavaGameClass;

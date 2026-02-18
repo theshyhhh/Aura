@@ -28,6 +28,8 @@ struct FUIWidgetRow : public FTableRowBase
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLevelChangedDynamicSignature, int32, NewValue, bool, bPlayLevelUpEffect);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, const FUIWidgetRow&, Row);
 
 UCLASS(BlueprintType, Blueprintable)
@@ -59,7 +61,7 @@ public:
 	FOnAttributeChangedSignature OnXPChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Level")
-	FOnPlayerStatChangedMultiSignature OnLevelChangedDelegate;
+	FOnLevelChangedDynamicSignature OnLevelChangedDelegate;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="WidgetData")
@@ -69,9 +71,9 @@ protected:
 	const T* GetDataTableRowByTag(const UDataTable* DataTable, const FGameplayTag& Tag);
 
 	void OnXPChanged(int32 NewXP);
-	
+
 	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& InputTag,
-						   const FGameplayTag& PrevInputTag)const;
+	                       const FGameplayTag& PrevInputTag) const;
 };
 
 template <typename T>
