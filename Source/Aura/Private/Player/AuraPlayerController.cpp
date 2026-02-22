@@ -132,7 +132,7 @@ void AAuraPlayerController::CursorTrace()
 	{
 		if (LastActor.IsValid())
 		{
-			IHighlightInterface::Execute_UnHighlightActor(LastActor.Get());
+			IHighlightInterface::Execute_UnhighlightActor(LastActor.Get());
 		}
 		if (CurrentActor.IsValid())
 		{
@@ -182,6 +182,17 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
+			if (CurrentActor.IsValid() && CurrentActor->Implements<UHighlightInterface>())
+			{
+				//移动到要交互的指定位置
+				IHighlightInterface::Execute_GetMoveToLocation(CurrentActor.Get(), CachedDestination);
+			}
+			else if (AuraAbilitySystemComponent && !AuraAbilitySystemComponent->HasMatchingGameplayTag(
+				FAuraGameplayTags::Get().Player_Block_InputPressed))
+			{
+				//生成点击移动后的指示特效
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+			}
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 				this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
@@ -195,10 +206,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag Tag)
 					CachedDestination = NavPath->PathPoints.Last(); //将目标地点设置为最后一个导航点，防止点击的目标地点无法正确到达导致的一直在自动移动
 					bAutoRunning = true;
 				}
-			}
-			if (AuraAbilitySystemComponent && !AuraAbilitySystemComponent->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
-			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 			}
 		}
 	}

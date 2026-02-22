@@ -18,7 +18,7 @@ class AURA_API AAuraGameModeBase : public AGameModeBase
 public:
 	void SaveSlotData(const UMVVM_LoadSlotViewModel* LoadSlotViewModel, int32 SlotIndex) const;
 
-	void SaveWorldState(UWorld* World) const;
+	void SaveWorldState(UWorld* World, const FString& InMapAssetName = FString("")) const;
 
 	void LoadWorldState(UWorld* World) const;
 
@@ -33,6 +33,8 @@ public:
 	void TravelToMap(UMVVM_LoadSlotViewModel* LoadSlotVM);
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
 
 private:
 	//地图名与地图的映射

@@ -25,7 +25,7 @@ void AAuraGameModeBase::SaveSlotData(const UMVVM_LoadSlotViewModel* LoadSlotView
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlotViewModel->GetLoadSlotName(), SlotIndex);
 }
 
-void AAuraGameModeBase::SaveWorldState(UWorld* World) const
+void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& InMapAssetName) const
 {
 	FString MapName = World->GetMapName();
 	//移除前缀
@@ -34,6 +34,11 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World) const
 	check(AuraGameInstance);
 	if (ULoadScreenSaveGame* SaveGame = GetSaveSlotData(AuraGameInstance->LoadSlotName, AuraGameInstance->LoadSlotIndex))
 	{
+		if (InMapAssetName != FString(""))
+		{
+			SaveGame->MapAssetName = InMapAssetName;
+			SaveGame->MapName = GetMapNameFromMapAssetName(InMapAssetName);
+		}
 		if (!SaveGame->HasMap(MapName))
 		{
 			FMapSaveInfo MapSaveInfo;
@@ -152,4 +157,16 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		return PlayerStarts[0];
 	}
 	return nullptr;
+}
+
+FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const
+{
+	for (const auto& Map : Maps)
+	{
+		if (Map.Value.ToSoftObjectPath().GetAssetFName() == MapAssetName)
+		{
+			return Map.Key;
+		}
+	}
+	return FString("");
 }

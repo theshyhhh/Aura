@@ -19,5 +19,8 @@ public:
 	void HighlightActor();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void UnHighlightActor();
+	void UnhighlightActor();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void GetMoveToLocation(FVector& OutLocation);
 };

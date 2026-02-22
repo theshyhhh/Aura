@@ -22,8 +22,10 @@ AAuraEnemy::AAuraEnemy()
 
 	GetMesh()->SetRenderCustomDepth(false);
 	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	GetMesh()->MarkRenderStateDirty();
 	Weapon->SetRenderCustomDepth(false);
 	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	Weapon->MarkRenderStateDirty();
 
 	HealthBarComponent = CreateDefaultSubobject<UWidgetComponent>("HealthBarComponent");
 	HealthBarComponent->SetupAttachment(GetRootComponent());
@@ -36,9 +38,13 @@ void AAuraEnemy::HighlightActor_Implementation()
 	SetRenderCustomDepth(true);
 }
 
-void AAuraEnemy::UnHighlightActor_Implementation()
+void AAuraEnemy::UnhighlightActor_Implementation()
 {
 	SetRenderCustomDepth(false);
+}
+
+void AAuraEnemy::GetMoveToLocation_Implementation(FVector& OutLocation)
+{
 }
 
 void AAuraEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
