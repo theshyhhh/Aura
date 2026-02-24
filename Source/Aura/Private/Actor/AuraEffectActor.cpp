@@ -4,7 +4,7 @@
 
 AAuraEffectActor::AAuraEffectActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
 }
@@ -12,6 +12,21 @@ AAuraEffectActor::AAuraEffectActor()
 void AAuraEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
+	InitialLocation = GetActorLocation();
+}
+
+void AAuraEffectActor::RotateAndSineMove(float DeltaSeconds)
+{
+	if (bEnableRotation)
+	{
+		AddActorWorldRotation(FRotator(0.0f, DeltaSeconds * RotateSpeed, 0.0f));
+	}
+	if (bEnableSineMovement)
+	{
+		SetActorLocation(InitialLocation + FVector(0, 0, FMath::Sin(SineRuntime * SinePeriodConstant)) * SineAmplitude);
+		SineRuntime += DeltaSeconds;
+		if (SineRuntime >= PI * 2)SineRuntime = 0;
+	}
 }
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)

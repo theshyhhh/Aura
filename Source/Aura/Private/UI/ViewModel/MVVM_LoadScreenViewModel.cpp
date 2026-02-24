@@ -39,6 +39,7 @@ void UMVVM_LoadScreenViewModel::NewSlotButtonClicked(int32 SlotIndex, const FStr
 	IndexToLoadSlotViewModel[SlotIndex]->SetMapName(AuraGameMode->GetDefaultMapName());
 	IndexToLoadSlotViewModel[SlotIndex]->PlayerStartTag = AuraGameMode->GetDefaultPlayerStartTag();
 	IndexToLoadSlotViewModel[SlotIndex]->SetPlayerLevel(1);
+	IndexToLoadSlotViewModel[SlotIndex]->MapAssetName = AuraGameMode->GetMapByName(AuraGameMode->GetDefaultMapName()).GetAssetName();
 	AuraGameMode->SaveSlotData(IndexToLoadSlotViewModel[SlotIndex], SlotIndex);
 	IndexToLoadSlotViewModel[SlotIndex]->UpdateSlot();
 

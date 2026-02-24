@@ -22,20 +22,27 @@ public:
 	//begin IHighlightInterface
 
 	virtual void HighlightActor_Implementation() override;
+
 	virtual void UnhighlightActor_Implementation() override;
+
 	virtual void GetMoveToLocation_Implementation(FVector& OutLocation) override;
+
 	//end IHighlightInterface
 
 	//begin IEnemyInterface
 
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+
 	virtual AActor* GetCombatTarget_Implementation() const override;
+
 	//end IEnemyInterface
 
 	//begin ICombatInterface
+
 	FORCEINLINE virtual int32 GetCharacterLevel_Implementation() const override { return Level; }
 
 	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
+
 	//end ICombatInterface
 
 	//广播生命值变化
@@ -55,6 +62,8 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	FORCEINLINE void SetEnemyLevel(const int32 InLevel) { Level = InLevel; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -67,7 +76,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Enemy|Character Class Default")
 	int32 Level = 1;
-
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBarComponent;
@@ -82,6 +90,9 @@ protected:
 	TWeakObjectPtr<AActor> CombatTarget;
 
 	virtual void OnStunTagChanged(const FGameplayTag CallBackTag, int32 NewCount) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLoot();
 
 private:
 	void SetRenderCustomDepth(const bool bValue) const;

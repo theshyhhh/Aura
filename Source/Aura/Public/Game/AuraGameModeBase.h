@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "AuraGameModeBase.generated.h"
 
+class ULootTier;
 class ULoadScreenSaveGame;
 class USaveGame;
 class UMVVM_LoadSlotViewModel;
@@ -36,6 +37,10 @@ public:
 
 	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
 
+	void PlayerDied(ACharacter* DeadCharacter);
+
+	FORCEINLINE TSoftObjectPtr<UWorld> GetMapByName(const FString& MapName) { return Maps[MapName]; }
+
 private:
 	//地图名与地图的映射
 	UPROPERTY(EditDefaultsOnly)
@@ -58,4 +63,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category="Loot")
+	TObjectPtr<ULootTier> LootTier;
 };

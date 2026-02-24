@@ -4,6 +4,7 @@
 #include "Aura/AuraLogChannel.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -22,6 +23,7 @@ void AAuraGameModeBase::SaveSlotData(const UMVVM_LoadSlotViewModel* LoadSlotView
 	LoadScreenSaveGame->SaveSlotStatus = LoadSlotViewModel->SaveSlotStatus;
 	LoadScreenSaveGame->MapName = LoadSlotViewModel->GetMapName();
 	LoadScreenSaveGame->PlayerStartTag = LoadSlotViewModel->PlayerStartTag;
+	LoadScreenSaveGame->MapAssetName = LoadSlotViewModel->MapAssetName;
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlotViewModel->GetLoadSlotName(), SlotIndex);
 }
 
@@ -93,7 +95,8 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 		for (FActorIterator It(World); It; ++It)
 		{
 			AActor* Actor = *It;
-			if (!IsValid(Actor) || !Actor->Implements<USaveInterface>())continue;
+			if (!Actor->Implements<USaveInterface>())continue;
+			UE_LOG(LogTemp, Warning, TEXT("世界状态加载"))
 			for (FActorSaveInfo Info : SaveGame->GetMapSaveInfoByName(MapName).SavedActors)
 			{
 				if (Info.ActorName == Actor->GetFName())
@@ -107,6 +110,7 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 					Archive.GetArchiveState().ArIsSaveGame = true;
 					Actor->Serialize(Reader);
 					ISaveInterface::Execute_LoadActor(Actor);
+					break;
 				}
 			}
 		}
@@ -169,4 +173,12 @@ FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetNam
 		}
 	}
 	return FString("");
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	UAuraGameInstance* AuraGI = Cast<UAuraGameInstance>(GetGameInstance());
+	ULoadScreenSaveGame* SaveGame = GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex);
+	if (!IsValid(SaveGame))return;
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
 }

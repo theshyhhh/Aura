@@ -49,6 +49,9 @@ public:
 	int32 SlotIndex;
 
 	UPROPERTY()
+	FString MapAssetName;
+
+	UPROPERTY()
 	ESaveSlotStatus SaveSlotStatus;
 
 private:

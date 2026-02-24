@@ -35,6 +35,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
+	void RotateAndSineMove(float DeltaSeconds);
+
+	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 
 	UFUNCTION(BlueprintCallable)
@@ -73,6 +76,28 @@ protected:
 	UPROPERTY()
 	TMap<FActiveGameplayEffectHandle, TWeakObjectPtr<UAbilitySystemComponent>> ActiveEffectHandles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Applied Effects")
 	float ActorLevel = 1.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector InitialLocation;
+
+private:
+	UPROPERTY(EditAnywhere)
+	bool bEnableRotation = true;
+
+	UPROPERTY(EditAnywhere)
+	float RotateSpeed = 30.f;
+
+	UPROPERTY(EditAnywhere)
+	bool bEnableSineMovement = true;
+
+	UPROPERTY(EditAnywhere)
+	float SineAmplitude = 10.f;
+
+	UPROPERTY(EditAnywhere)
+	float SinePeriodConstant = 2.f;
+
+	UPROPERTY(EditAnywhere)
+	float SineRuntime = 0.f;
 };

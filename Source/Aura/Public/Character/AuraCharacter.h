@@ -19,7 +19,11 @@ public:
 	AAuraCharacter();
 
 	//begin ICombatInterface
+
 	virtual int32 GetCharacterLevel_Implementation() const override;
+
+	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
+
 	//end ICombatInterface
 
 protected:
@@ -33,6 +37,7 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 	//PlayerInterface Begin
+
 	virtual void AddXP_Implementation(const int32 InXP) override;
 
 	virtual void LevelUp_Implementation() override;
@@ -60,6 +65,7 @@ public:
 	virtual void HideMagicCircle_Implementation() override;
 
 	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;
+
 	//PlayerInterfaceEnd
 
 protected:
@@ -84,4 +90,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> PrimaryAttributeEffect_SetByCaller;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime = 5.f;
+
+	FTimerHandle DeathTimerHandle;
 };

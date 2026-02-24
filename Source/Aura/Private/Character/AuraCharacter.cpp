@@ -54,9 +54,27 @@ int32 AAuraCharacter::GetCharacterLevel_Implementation() const
 	return AuraPlayerState->GetPlayerLevel();
 }
 
+void AAuraCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda([this]()
+	{
+		if (AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			AuraGM->PlayerDied(this);
+		}
+	});
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, DeathTimerDelegate, DeathTime, false);
+	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	//初始化玩家角色属性信息
+	LoadProgress();
 }
 
 void AAuraCharacter::Tick(float DeltaTime)
@@ -69,8 +87,6 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	//服务端初始化
 	InitAbilityActorInfo();
-	//初始化玩家角色属性信息
-	LoadProgress();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
